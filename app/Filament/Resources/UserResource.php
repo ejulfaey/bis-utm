@@ -25,13 +25,17 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Manage';
 
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return in_array(auth()->user()->role_id, [Role::SUPERADMIN, Role::ADMIN]);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Card::make()
                     ->schema([
-
                         Forms\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\TextInput::make('name')
@@ -51,7 +55,6 @@ class UserResource extends Resource
                                     ->confirmed()
                                     ->minLength(8)
                                     ->helperText('Minimum length is 8 characters')
-                                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                                     ->required(fn (Component $livewire): bool => $livewire instanceof Pages\CreateUser),
                                 Forms\Components\TextInput::make('password_confirmation')
                                     ->label('Re-type Password')
@@ -62,7 +65,14 @@ class UserResource extends Resource
                                 Forms\Components\Select::make('role_id')
                                     ->label('Role')
                                     ->placeholder('Select role')
-                                    ->options(Role::all()->pluck('name', 'id'))
+                                    ->options(function () {
+                                        $role = auth()->user()->role_id;
+                                        return Role::when($role == Role::SUPERADMIN, function ($query, $role) {
+                                            $query->whereIn('id', [Role::SUPERADMIN, Role::ADMIN, Role::NORMAL]);
+                                        }, function ($query) {
+                                            $query->whereIn('id', [Role::ADMIN, Role::NORMAL]);
+                                        })->get()->pluck('name', 'id');
+                                    })
                                     ->required(),
                             ]),
                     ]),
@@ -109,7 +119,6 @@ class UserResource extends Resource
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
-            'password' => Pages\ChangePassword::route('/change-password'),
         ];
     }
 }

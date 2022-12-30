@@ -14,4 +14,15 @@ class CreateUser extends CreateRecord
     {
         return 'User has been created';
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['password'] = bcrypt($data['password']);
+
+        activity()
+            ->withProperties($data)
+            ->log('created');
+
+        return $data;
+    }
 }
