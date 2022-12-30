@@ -15,10 +15,7 @@ class EditUser extends EditRecord
     protected function getActions(): array
     {
         return [
-            Actions\DeleteAction::make()
-                ->after(function () {
-                    activity()->log('deleted');
-                }),
+            Actions\DeleteAction::make(),
         ];
     }
 
@@ -33,10 +30,6 @@ class EditUser extends EditRecord
             $data['password'] = bcrypt($data['password']);
         else
             $data = Arr::except($data, ['password', 'password_confirmation']);
-
-        activity()
-            ->withProperties($data)
-            ->log('edited');
 
         return $data;
     }
