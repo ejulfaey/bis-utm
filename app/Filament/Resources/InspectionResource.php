@@ -12,6 +12,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -130,10 +131,14 @@ class InspectionResource extends Resource
                                     ->afterStateUpdated(function (Closure $get, Closure $set, $state) {
                                         if ($get('maintenance_score_id') && $state != null) {
                                             $matrix = Parameter::find($state)->value * Parameter::find($get('maintenance_score_id'))->value;
+                                            $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
+                                                ->first();
                                             $set('total_matrix', $matrix);
+                                            $set('classification', $classification->name);
                                         }
                                         if ($state == null) {
                                             $set('total_matrix', null);
+                                            $set('classification', null);
                                         }
                                     })
                                     ->reactive()
@@ -144,10 +149,14 @@ class InspectionResource extends Resource
                                     ->afterStateUpdated(function (Closure $get, Closure $set, $state) {
                                         if ($get('condition_score_id') && $state != null) {
                                             $matrix = Parameter::find($state)->value * Parameter::find($get('condition_score_id'))->value;
+                                            $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
+                                                ->first();
                                             $set('total_matrix', $matrix);
+                                            $set('classification', $classification->name);
                                         }
                                         if ($state == null) {
                                             $set('total_matrix', null);
+                                            $set('classification', null);
                                         }
                                     })
                                     ->reactive()
@@ -163,11 +172,15 @@ class InspectionResource extends Resource
                                 }
                             })
                             ->reactive(),
-                        Forms\Components\TextInput::make('classfication')
+                        Forms\Components\TextInput::make('classification')
                             ->disabled(true)
                             ->afterStateHydrated(function (callable $get, callable $set, $state) {
                                 if ($get('condition_score_id') && $get('maintenance_score_id')) {
-                                    // 
+                                    $score = Parameter::whereIn('id', [$get('condition_score_id'), $get('maintenance_score_id')])->get();
+                                    $matrix = $score->firstWhere('id', $get('condition_score_id'))->value * $score->firstWhere('id', $get('maintenance_score_id'))->value;
+                                    $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
+                                        ->first();
+                                    $set('classification', $classification->name);
                                 }
                             })
                             ->reactive(),
@@ -187,17 +200,28 @@ class InspectionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('project.college_block')
                     ->label('Name College')
-                    ->description(fn (Model $record): ?string => $record->user->name),
+                    ->description(fn (Model $record): ?string => $record->user->name)
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('location.name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('component.name')
                     ->description(function (Model $record): string {
                         return $record->subcomponent->name;
-                    }),
-                Tables\Columns\TextColumn::make('matrix')
-                    ->label('Total Matrix'),
+                    })
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('total_matrix')
+                    ->label('Total Matrix')
+                    ->alignCenter()
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('classification.name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->date(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
             ])
             ->filters([
                 //
@@ -213,7 +237,7 @@ class InspectionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\PhotosRelationManager::class,
         ];
     }
 
