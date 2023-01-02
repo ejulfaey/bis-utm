@@ -41,4 +41,20 @@ class Project extends Model
     {
         return $this->hasMany(Inspection::class);
     }
+
+    public function inspection_architectural()
+    {
+        return $this->inspections()->where('component_id', Parameter::COMP_ARCHITECTURAL);
+    }
+
+    public function inspection_structural()
+    {
+        return $this->inspections()->where('component_id', Parameter::COMP_STRUCTURAL);
+    }
+
+    public function inspection_building()
+    {
+        return $this->inspections()->where('component_id', Parameter::COMP_BUILDING_SERVICE);
+    }
+
 }

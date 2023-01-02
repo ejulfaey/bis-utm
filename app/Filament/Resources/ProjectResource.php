@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
+use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\Parameter;
 use App\Models\Project;
 use App\Models\Role;
@@ -112,6 +113,9 @@ class ProjectResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\InspectionArchitecturalRelationManager::class,
+            RelationManagers\InspectionStructuralRelationManager::class,
+            RelationManagers\InspectionBuildingRelationManager::class,
         ];
     }
 

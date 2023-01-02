@@ -21,6 +21,10 @@ class Parameter extends Model
     public const SCORE_MAINTENANCE = 9;
     public const CLASSIFICATION_BUILDING = 10;
 
+    public const COMP_STRUCTURAL = 9;
+    public const COMP_ARCHITECTURAL = 10;
+    public const COMP_BUILDING_SERVICE = 11;
+
     public function parent()
     {
         return $this->belongsTo(ParameterSeeder::class, 'parent_id');
