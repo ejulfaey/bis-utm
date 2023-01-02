@@ -15,8 +15,6 @@ class InspectionBuildingRelationManager extends RelationManager
 {
     protected static string $relationship = 'inspection_building';
 
-    protected static ?string $recordTitleAttribute = 'component';
-
     public static function form(Form $form): Form
     {
         return $form
@@ -38,10 +36,8 @@ class InspectionBuildingRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('location.name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('component.name')
-                    ->description(function (Model $record): string {
-                        return $record->subcomponent->name;
-                    })
+                    Tables\Columns\TextColumn::make('subcomponent.name')
+                    ->label('Sub Component')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_matrix')

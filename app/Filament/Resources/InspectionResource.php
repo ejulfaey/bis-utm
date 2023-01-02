@@ -51,6 +51,7 @@ class InspectionResource extends Resource
                             })
                             ->reactive()
                             ->disabledOn('edit')
+                            ->columnSpan('full')
                             ->required(),
                         Forms\Components\TextInput::make('assessor')
                             ->label('Assessor')
@@ -64,13 +65,21 @@ class InspectionResource extends Resource
                             ->label('Assessor')
                             ->hiddenOn('edit')
                             ->disabled(true),
+                        Forms\Components\TextInput::make('college_block')
+                            ->label('College/Block')
+                            ->afterStateHydrated(function (callable $get, callable $set) {
+                                $project = Project::find($get('project_id'));
+                                if ($project) $set('college_block', $project->college_block);
+                            })
+                            ->disabled(true),
+
                     ])
                     ->collapsible()
                     ->columns(2),
                 Section::make('BCA Inventory')
                     ->description('Component')
                     ->schema([
-                        Grid::make(5)
+                        Grid::make(3)
                             ->schema([
                                 Forms\Components\DatePicker::make('date')
                                     ->maxDate(today()->addDay())
@@ -91,18 +100,11 @@ class InspectionResource extends Resource
                                 Forms\Components\TextInput::make('grid_no')
                                     ->label('Grid No.')
                                     ->maxLength(255),
+                                Forms\Components\Select::make('location_id')
+                                    ->label('Location')
+                                    ->options(Parameter::whereGroupId(Parameter::LOCATION)->pluck('name', 'id'))
+                                    ->required(),
                             ]),
-                        Forms\Components\TextInput::make('college_block')
-                            ->label('College/Block')
-                            ->afterStateHydrated(function (callable $get, callable $set) {
-                                $project = Project::find($get('project_id'));
-                                if ($project) $set('college_block', $project->college_block);
-                            })
-                            ->disabled(true),
-                        Forms\Components\Select::make('location_id')
-                            ->label('Location')
-                            ->options(Parameter::whereGroupId(Parameter::LOCATION)->pluck('name', 'id'))
-                            ->required(),
                         Forms\Components\Select::make('component_id')
                             ->label('Component')
                             ->options(Parameter::whereGroupId(Parameter::COMPONENT)->pluck('name', 'id'))
