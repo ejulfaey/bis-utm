@@ -18,7 +18,10 @@ return new class extends Migration
             $table->string('name');
             $table->integer('group_id');
             $table->integer('value')->nullable();
+            $table->integer('parent_id')->nullable();
             $table->boolean('is_active')->default(1);
+            $table->integer('from')->nullable();
+            $table->integer('to')->nullable();
             $table->timestamps();
         });
     }

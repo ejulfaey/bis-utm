@@ -13,8 +13,7 @@ class Inspection extends Model
 
     protected $fillable = [
         'project_id',
-        'assessor_id',
-        'name',
+        'user_id',
         'date',
         'weather_id',
         'floor_no',
@@ -22,7 +21,7 @@ class Inspection extends Model
         'grid_no',
         'location_id',
         'component_id',
-        'subcomponent_id',
+        'sub_component_id',
         'defect_id',
         'condition_score_id',
         'maintenance_score_id',
@@ -41,9 +40,14 @@ class Inspection extends Model
         return $this->condition_score->value * $this->maintenance_score->value;
     }
 
-    public function assessor()
+    public function project()
     {
-        return $this->belongsTo(User::class, 'assessor_id');
+        return $this->belongsTo(Project::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function weather()
@@ -63,7 +67,7 @@ class Inspection extends Model
 
     public function subcomponent()
     {
-        return $this->belongsTo(Parameter::class, 'subcomponent_id');
+        return $this->belongsTo(Parameter::class, 'sub_component_id');
     }
 
     public function defect_id()

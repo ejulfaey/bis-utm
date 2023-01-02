@@ -3,11 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
-use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\Parameter;
 use App\Models\Project;
 use App\Models\Role;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
@@ -114,7 +112,6 @@ class ProjectResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
         ];
     }
 

@@ -9,7 +9,6 @@ use App\Models\Parameter;
 use App\Models\Project;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Resources\Form;
@@ -19,6 +18,7 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Component;
 
 class InspectionResource extends Resource
 {
@@ -40,20 +40,42 @@ class InspectionResource extends Resource
                             ->options(Project::all()->pluck('name', 'id'))
                             ->placeholder('Select a project')
                             ->searchable()
+                            ->afterStateUpdated(function (Closure $set, $state) {
+                                if ($state) {
+                                    $project = Project::find($state);
+                                    $set('college_block', $project->college_block);
+                                    $set('assessor', $project->user->name);
+                                } else {
+                                    $set('college_block', null);
+                                    $set('assessor', null);
+                                }
+                            })
+                            ->reactive()
+                            ->disabledOn('edit')
                             ->required(),
-                        Forms\Components\TextInput::make('assessor_id')
+                        Forms\Components\TextInput::make('assessor')
                             ->label('Assessor')
-                            ->default(auth()->user()->name)
+                            ->afterStateHydrated(function (callable $get, callable $set) {
+                                $project = Project::find($get('project_id'));
+                                if ($project) $set('assessor', $project->user->name);
+                            })
+                            ->hiddenOn('create')
+                            ->disabled(true),
+                        Forms\Components\TextInput::make('assessor')
+                            ->label('Assessor')
+                            ->hiddenOn('edit')
                             ->disabled(true),
                     ])
                     ->collapsible()
                     ->columns(2),
-                Section::make('Component Info')
-                    ->description('Description')
+                Section::make('BCA Inventory')
+                    ->description('Component')
                     ->schema([
                         Grid::make(5)
                             ->schema([
                                 Forms\Components\DatePicker::make('date')
+                                    ->maxDate(today()->addDay())
+                                    ->default(today())
                                     ->required(),
                                 Forms\Components\Select::make('weather_id')
                                     ->label('Weather')
@@ -71,22 +93,33 @@ class InspectionResource extends Resource
                                     ->label('Grid No.')
                                     ->maxLength(255),
                             ]),
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
+                        Forms\Components\TextInput::make('college_block')
+                            ->label('College/Block')
+                            ->afterStateHydrated(function (callable $get, callable $set) {
+                                $project = Project::find($get('project_id'));
+                                if ($project) $set('college_block', $project->college_block);
+                            })
+                            ->disabled(true),
                         Forms\Components\Select::make('location_id')
                             ->label('Location')
                             ->options(Parameter::whereGroupId(Parameter::LOCATION)->pluck('name', 'id'))
                             ->required(),
+                        Forms\Components\Select::make('component_id')
+                            ->label('Component')
+                            ->options(Parameter::whereGroupId(Parameter::COMPONENT)->pluck('name', 'id'))
+                            ->reactive()
+                            ->required(),
+                        Forms\Components\Select::make('sub_component_id')
+                            ->label('Sub Component')
+                            ->options(function (callable $get) {
+
+                                if ($get('component_id')) {
+                                    return Parameter::whereParentId($get('component_id'))->pluck('name', 'id');
+                                }
+                            })
+                            ->required(),
                         Grid::make(3)
                             ->schema([
-                                Forms\Components\Select::make('component_id')
-                                    ->label('Component')
-                                    ->options(Parameter::whereGroupId(Parameter::COMPONENT)->pluck('name', 'id'))
-                                    ->required(),
-                                Forms\Components\Select::make('sub_component_id')
-                                    ->label('Sub Component')
-                                    ->options(Parameter::whereGroupId(Parameter::SUBCOMPONENT)->pluck('name', 'id')),
                                 Forms\Components\Select::make('defect_id')
                                     ->label('Building Defect')
                                     ->options(Parameter::whereGroupId(Parameter::DEFECT)->pluck('name', 'id'))
@@ -122,9 +155,21 @@ class InspectionResource extends Resource
                             ]),
                         Forms\Components\TextInput::make('total_matrix')
                             ->disabled(true)
+                            ->afterStateHydrated(function (callable $get, callable $set, $state) {
+                                if ($get('condition_score_id') && $get('maintenance_score_id')) {
+                                    $score = Parameter::whereIn('id', [$get('condition_score_id'), $get('maintenance_score_id')])->get();
+                                    $matrix = $score->firstWhere('id', $get('condition_score_id'))->value * $score->firstWhere('id', $get('maintenance_score_id'))->value;
+                                    $set('total_matrix', $matrix);
+                                }
+                            })
                             ->reactive(),
-                        Forms\Components\TextInput::make('total_matrix')
+                        Forms\Components\TextInput::make('classfication')
                             ->disabled(true)
+                            ->afterStateHydrated(function (callable $get, callable $set, $state) {
+                                if ($get('condition_score_id') && $get('maintenance_score_id')) {
+                                    // 
+                                }
+                            })
                             ->reactive(),
                         Forms\Components\Textarea::make('remark')
                             ->columnSpan('full')
@@ -140,10 +185,9 @@ class InspectionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('project.name')
-                    ->description(function (Model $record): string {
-                        return $record->assessor->name;
-                    }),
+                Tables\Columns\TextColumn::make('project.college_block')
+                    ->label('Name College')
+                    ->description(fn (Model $record): ?string => $record->user->name),
                 Tables\Columns\TextColumn::make('component.name')
                     ->description(function (Model $record): string {
                         return $record->subcomponent->name;

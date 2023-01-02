@@ -16,8 +16,7 @@ return new class extends Migration
         Schema::create('inspections', function (Blueprint $table) {
             $table->id();
             $table->integer('project_id');
-            $table->integer('assessor_id');
-            $table->string('name');
+            $table->integer('user_id');
             $table->date('date');
             $table->integer('weather_id');
             $table->string('floor_no');
@@ -25,10 +24,10 @@ return new class extends Migration
             $table->string('grid_no')->nullable();
             $table->integer('location_id');
             $table->integer('component_id');
-            $table->integer('sub_component_id')->nullable();
+            $table->integer('sub_component_id');
             $table->integer('defect_id');
-            $table->decimal('condition_score_id');
-            $table->decimal('maintenance_score_id');
+            $table->integer('condition_score_id');
+            $table->integer('maintenance_score_id');
             $table->text('remark')->nullable();
             $table->timestamps();
         });

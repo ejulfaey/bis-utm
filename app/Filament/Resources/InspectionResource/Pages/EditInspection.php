@@ -16,4 +16,9 @@ class EditInspection extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function getSavedNotificationMessage(): ?string
+    {
+        return "Inspection has been saved";
+    }
 }

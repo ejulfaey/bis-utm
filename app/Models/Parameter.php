@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Seeders\ParameterSeeder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,4 +19,10 @@ class Parameter extends Model
     public const BUILDING_TYPE = 7;
     public const SCORE_CONDITION = 8;
     public const SCORE_MAINTENANCE = 9;
+    public const CLASSIFICATION_BUILDING = 10;
+
+    public function parent()
+    {
+        return $this->belongsTo(ParameterSeeder::class, 'parent_id');
+    }
 }

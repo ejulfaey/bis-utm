@@ -22,69 +22,93 @@ class ParameterSeeder extends Seeder
             ['group_id' => 1, 'name' => 'Cloudy', 'created_at' => now(), 'updated_at' => now()],
 
             // location
-            ['group_id' => 2, 'name' => 'Location A', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 2, 'name' => 'Location B', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 2, 'name' => 'Location C', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 2, 'name' => 'Location D', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 2, 'name' => 'Location E', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 2, 'name' => 'Hall', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 2, 'name' => 'Room', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 2, 'name' => 'Bathroom/Toilet', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 2, 'name' => 'External Area', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 2, 'name' => 'Corridor', 'created_at' => now(), 'updated_at' => now()],
 
             // component
             ['group_id' => 3, 'name' => 'Structural', 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 3, 'name' => 'Architectural', 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 3, 'name' => 'Building Service', 'created_at' => now(), 'updated_at' => now()],
 
-            // sub-component
-            ['group_id' => 4, 'name' => 'Sub Component A', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Sub Component B', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Sub Component C', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Sub Component D', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Sub Component E', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Sub Component F', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Sub Component G', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Sub Component H', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Sub Component I', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Sub Component J', 'created_at' => now(), 'updated_at' => now()],
-
             // defects
-            ['group_id' => 5, 'name' => 'Defect A', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 5, 'name' => 'Defect B', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 5, 'name' => 'Defect C', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 5, 'name' => 'Defect D', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 5, 'name' => 'Defect E', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 5, 'name' => 'Defect A', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 5, 'name' => 'Defect B', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 5, 'name' => 'Defect C', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 5, 'name' => 'Defect D', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 5, 'name' => 'Defect E', 'created_at' => now(), 'updated_at' => now()],
-
-            // classfication
-            ['group_id' => 6, 'name' => 'Great', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 6, 'name' => 'Good', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 6, 'name' => 'Moderate', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 6, 'name' => 'Bad', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 6, 'name' => 'Poor', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Corrosion', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Cracking', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Spalling', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Deflection', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Delamination', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Peeling paint', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Mold and fungus', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Dampness', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Discolouration', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Missing', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Malfunction', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Broken', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Leaking', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 5, 'name' => 'Rot/Rusting', 'created_at' => now(), 'updated_at' => now()],
 
             // building type
-            ['group_id' => 7, 'name' => 'Building Type A', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 7, 'name' => 'Building Type B', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 7, 'name' => 'Building Type C', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 7, 'name' => 'Building Type D', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 7, 'name' => 'Reinforced Concrete - Low-rise building', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 7, 'name' => 'Reinforced Concrete - Mid-rise building', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 7, 'name' => 'Reinforced Concrete - High-rise building', 'created_at' => now(), 'updated_at' => now()],
 
         ]);
 
         DB::table('parameters')->insert([
-            //     // Condition Score
+
+            // sub-component
+            ['group_id' => 4, 'name' => 'Beam', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Column', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Slab', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Staircase', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Roofing system', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Wall', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Foundation', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Building finishes-(Beam)', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Building finishes-(Column)', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Building finishes-(Slab)', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Building finishes-(Wall)', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Building finishes-(Foundation)', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Building finishes-(Staircase)', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Door and frame', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Window and frame', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Ceiling', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Hose reel', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Fire extinguisher system', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Fire alarm system', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Socket/Switch', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Electrical cable', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Distribution board', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Lift', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 4, 'name' => 'Plumbing system', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
+
+        ]);
+
+        DB::table('parameters')->insert([
+            // Condition Score
             ['group_id' => 8, 'name' => 'Bad', 'value' => 1, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 8, 'name' => 'Poor', 'value' => 2, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 8, 'name' => 'Moderate', 'value' => 3, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 8, 'name' => 'Good', 'value' => 4, 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 8, 'name' => 'Best', 'value' => 5, 'created_at' => now(), 'updated_at' => now()],
             // Maintenance Score
             ['group_id' => 9, 'name' => 'Bad', 'value' => 1, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 9, 'name' => 'Poor', 'value' => 2, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 9, 'name' => 'Moderate', 'value' => 3, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 9, 'name' => 'Good', 'value' => 4, 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 9, 'name' => 'Best', 'value' => 5, 'created_at' => now(), 'updated_at' => now()],
+        ]);
+        DB::table('parameters')->insert([
+            // Classification
+            ['group_id' => 6, 'name' => 'Class 1 - Very Severe', 'from' => 1, 'to' => 4, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 6, 'name' => 'Class 2 - Severe', 'from' => 5, 'to' => 8, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 6, 'name' => 'Class 3 - Moderate', 'from' => 9, 'to' => 12, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 6, 'name' => 'Class 4 - Negligible', 'from' => 13, 'to' => 16, 'created_at' => now(), 'updated_at' => now()],
+
+            // Classification Building
+            ['group_id' => 10, 'name' => 'Bad', 'from' => 0, 'to' => 70, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 10, 'name' => 'Moderate', 'from' => 71, 'to' => 80, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 10, 'name' => 'Good', 'from' => 81, 'to' => 100, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }
