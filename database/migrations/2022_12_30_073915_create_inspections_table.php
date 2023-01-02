@@ -18,8 +18,6 @@ return new class extends Migration
             $table->integer('project_id');
             $table->integer('assessor_id');
             $table->string('name');
-            $table->string('college_block');
-            $table->integer('total_floor');
             $table->date('date');
             $table->integer('weather_id');
             $table->string('floor_no');
@@ -29,8 +27,8 @@ return new class extends Migration
             $table->integer('component_id');
             $table->integer('sub_component_id')->nullable();
             $table->integer('defect_id');
-            $table->decimal('condition_score');
-            $table->decimal('maintenance_score');
+            $table->decimal('condition_score_id');
+            $table->decimal('maintenance_score_id');
             $table->text('remark')->nullable();
             $table->timestamps();
         });
@@ -43,6 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('components');
+        Schema::dropIfExists('inspections');
     }
 };

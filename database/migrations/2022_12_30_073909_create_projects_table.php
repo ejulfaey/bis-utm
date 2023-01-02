@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('name');
             $table->integer('user_id')->comment('creator');
             $table->string('plan_attachment')->nullable();
+            $table->integer('building_type_id');
+            $table->string('college_block');
+            $table->integer('total_floor');
             $table->timestamps();
         });
     }

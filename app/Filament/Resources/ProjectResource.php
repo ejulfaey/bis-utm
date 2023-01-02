@@ -4,10 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
+use App\Models\Parameter;
 use App\Models\Project;
 use App\Models\Role;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Grid;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -22,7 +25,7 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
-    protected static ?string $navigationGroup = 'Main';
+    protected static ?int $navigationSort = 2;
 
     protected static function shouldRegisterNavigation(): bool
     {
@@ -38,16 +41,38 @@ class ProjectResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->maxLength(255)
                             ->required(),
+                        Forms\Components\TextInput::make('user.name')
+                            ->label('Assessor')
+                            ->default(auth()->user()->name)
+                            ->disabled(true),
+                        Grid::make(3)
+                            ->schema([
+                                Forms\Components\Select::make('building_type_id')
+                                    ->label('Building Type')
+                                    ->options(Parameter::whereGroupId(Parameter::BUILDING_TYPE)->pluck('name', 'id'))
+                                    ->required(),
+                                Forms\Components\TextInput::make('college_block')
+                                    ->label('College/Block')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('total_floor')
+                                    ->numeric()
+                                    ->required(),
+                            ]),
                         Forms\Components\FileUpload::make('plan_attachment')
                             ->label('Drawing Plan')
                             ->directory('plans')
                             ->acceptedFileTypes(['application/pdf', 'image/*'])
                             ->maxSize(10240)
-                            ->panelAspectRatio('4:1')
                             ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
                                 return (string) str(date('dmyhis') . '.' . $file->extension())->prepend('plan-');
                             })
-                            ->helperText('Maximum size is 10MB'),
+                            ->helperText('Maximum size is 10MB')
+                            ->columnSpan('full'),
+                    ])
+                    ->columns([
+                        'sm' => 1,
+                        'md' => 2,
                     ])
             ]);
     }
@@ -57,14 +82,21 @@ class ProjectResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->description(fn (Project $record): string => $record->user->email)
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('building_type.name')
+                    ->description(fn (Project $record): string => 'Total Floor: ' . $record->total_floor)
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('inspections_count')
                     ->counts('inspections')
                     ->label('Total Inspection(s)')
                     ->alignCenter()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Last Update')
+                    ->description(fn (Project $record): string => 'Since: ' . $record->created_at->format('d M Y'))
                     ->sortable()
                     ->dateTime(),
             ])

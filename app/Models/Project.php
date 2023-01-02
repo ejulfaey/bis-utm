@@ -15,6 +15,9 @@ class Project extends Model
         'name',
         'user_id',
         'plan_attachment',
+        'building_type_id',
+        'college_block',
+        'total_floor',
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -27,6 +30,11 @@ class Project extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function building_type()
+    {
+        return $this->belongsTo(Parameter::class, 'building_type_id');
     }
 
     public function inspections()
