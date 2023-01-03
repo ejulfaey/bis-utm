@@ -27,12 +27,12 @@ class Parameter extends Model
 
     public function parent()
     {
-        return $this->belongsTo(ParameterSeeder::class, 'parent_id');
+        return $this->belongsTo(Parameter::class, 'parent_id');
     }
 
     public function subcomponent()
     {
-        return $this->hasMany(ParameterSeeder::class, 'parent_id');
+        return $this->hasMany(Parameter::class, 'parent_id');
     }
 
 }
