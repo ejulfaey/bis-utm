@@ -28,6 +28,8 @@ class ComponentResource extends Resource
 
     protected static ?string $slug = 'component';
 
+    protected static ?int $navigationSort = 1;
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->whereGroupId(Parameter::COMPONENT);
@@ -37,7 +39,9 @@ class ComponentResource extends Resource
     {
         return $form
             ->schema([
-                // 
+                Forms\Components\TextInput::make('name')
+                    ->columnSpan('full')
+                    ->required(),
             ]);
     }
 
@@ -52,7 +56,8 @@ class ComponentResource extends Resource
                     ->dateTime()
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->successNotificationTitle('Component has been updated'),
             ]);
     }
 

@@ -23,12 +23,9 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Manage';
+    protected static ?string $navigationGroup = 'Admin Settings';
 
-    protected static function shouldRegisterNavigation(): bool
-    {
-        return in_array(auth()->user()->role_id, [Role::SUPERADMIN, Role::ADMIN]);
-    }
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

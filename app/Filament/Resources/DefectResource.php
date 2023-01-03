@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SubComponentResource\Pages;
+use App\Filament\Resources\DefectResource\Pages;
+use App\Filament\Resources\DefectResource\RelationManagers;
+use App\Models\Defect;
 use App\Models\Parameter;
 use Filament\Forms;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -13,19 +14,21 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SubComponentResource extends Resource
+class DefectResource extends Resource
 {
     protected static ?string $model = Parameter::class;
 
-    protected static ?string $label = 'Sub Component';
+    protected static ?string $label = 'Defect';
 
     protected static ?string $navigationGroup = 'Manage';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationLabel = 'Defects';
 
-    protected static ?string $slug = 'sub-component';
+    protected static ?string $navigationIcon = 'heroicon-o-lightning-bolt';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?string $slug = 'defects';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute  = 'name';
 
@@ -35,8 +38,7 @@ class SubComponentResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ])
-            ->whereGroupId(Parameter::SUBCOMPONENT)
-            ->orderBy('parent_id')
+            ->whereGroupId(Parameter::DEFECT)
             ->orderBy('name');
     }
 
@@ -44,11 +46,9 @@ class SubComponentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('parent_id')
-                    ->label('Component')
-                    ->options(Parameter::whereGroupId(Parameter::COMPONENT)->pluck('name', 'id'))
-                    ->required(),
                 Forms\Components\TextInput::make('name')
+                    ->maxLength(255)
+                    ->columnSpan('full')
                     ->required(),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Is Active')
@@ -63,15 +63,11 @@ class SubComponentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
-                    ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('parent.name')
-                    ->label('Component')
-                    ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\BadgeColumn::make('is_active')
                     ->label('Active')
                     ->enum([
@@ -90,20 +86,23 @@ class SubComponentResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->successNotificationTitle('Sub component has been updated'),
+                    ->successNotificationTitle('Defect has been updated'),
                 Tables\Actions\DeleteAction::make()
-                    ->successNotificationTitle('Sub component has been deleted'),
+                    ->successNotificationTitle('Defect has been deleted'),
                 Tables\Actions\RestoreAction::make()
-                    ->successNotificationTitle('Sub component has been restored'),
+                    ->successNotificationTitle('Defect has been restored'),
                 Tables\Actions\ForceDeleteAction::make()
-                    ->successNotificationTitle('Sub component has been destroyed'),
+                    ->successNotificationTitle('Defect has been destroyed'),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageSubComponents::route('/'),
+            'index' => Pages\ManageDefects::route('/'),
         ];
     }
 }

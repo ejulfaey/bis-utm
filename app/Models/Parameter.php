@@ -5,10 +5,13 @@ namespace App\Models;
 use Database\Seeders\ParameterSeeder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Parameter extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     public const WEATHER = 1;
     public const LOCATION = 2;
@@ -25,6 +28,20 @@ class Parameter extends Model
     public const COMP_ARCHITECTURAL = 10;
     public const COMP_BUILDING_SERVICE = 11;
 
+    protected $fillable = [
+        'name',
+        'group_id',
+        'is_active',
+        'parent_id',
+    ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->setDescriptionForEvent(fn (string $eventName) => "Parameter has been {$eventName}");
+    }
+
     public function parent()
     {
         return $this->belongsTo(Parameter::class, 'parent_id');
@@ -35,4 +52,8 @@ class Parameter extends Model
         return $this->hasMany(Parameter::class, 'parent_id');
     }
 
+    public function scopeActive($query)
+    {
+        return $query->whereIsActive(true);
+    }
 }

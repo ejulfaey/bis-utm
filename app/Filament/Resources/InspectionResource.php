@@ -88,7 +88,7 @@ class InspectionResource extends Resource
                                     ->required(),
                                 Forms\Components\Select::make('weather_id')
                                     ->label('Weather')
-                                    ->options(Parameter::whereGroupId(Parameter::WEATHER)->pluck('name', 'id'))
+                                    ->options(Parameter::active()->whereGroupId(Parameter::WEATHER)->pluck('name', 'id'))
                                     ->required(),
                                 Forms\Components\TextInput::make('floor_no')
                                     ->label('Floor No.')
@@ -103,12 +103,13 @@ class InspectionResource extends Resource
                                     ->maxLength(255),
                                 Forms\Components\Select::make('location_id')
                                     ->label('Location')
-                                    ->options(Parameter::whereGroupId(Parameter::LOCATION)->pluck('name', 'id'))
+                                    ->options(Parameter::active()->whereGroupId(Parameter::LOCATION)->pluck('name', 'id'))
+                                    ->searchable()
                                     ->required(),
                             ]),
                         Forms\Components\Select::make('component_id')
                             ->label('Component')
-                            ->options(Parameter::whereGroupId(Parameter::COMPONENT)->pluck('name', 'id'))
+                            ->options(Parameter::active()->whereGroupId(Parameter::COMPONENT)->pluck('name', 'id'))
                             ->reactive()
                             ->required(),
                         Forms\Components\Select::make('sub_component_id')
@@ -119,20 +120,22 @@ class InspectionResource extends Resource
                                     return Parameter::whereParentId($get('component_id'))->pluck('name', 'id');
                                 }
                             })
+                            ->searchable()
                             ->required(),
                         Grid::make(3)
                             ->schema([
                                 Forms\Components\Select::make('defect_id')
                                     ->label('Building Defect')
-                                    ->options(Parameter::whereGroupId(Parameter::DEFECT)->pluck('name', 'id'))
+                                    ->options(Parameter::active()->whereGroupId(Parameter::DEFECT)->pluck('name', 'id'))
+                                    ->searchable()
                                     ->required(),
                                 Forms\Components\Select::make('condition_score_id')
                                     ->label('Condition Score')
-                                    ->options(Parameter::whereGroupId(Parameter::SCORE_CONDITION)->pluck('value', 'id'))
+                                    ->options(Parameter::active()->whereGroupId(Parameter::SCORE_CONDITION)->pluck('value', 'id'))
                                     ->afterStateUpdated(function (Closure $get, Closure $set, $state) {
                                         if ($get('maintenance_score_id') && $state != null) {
                                             $matrix = Parameter::find($state)->value * Parameter::find($get('maintenance_score_id'))->value;
-                                            $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
+                                            $classification = Parameter::active()->whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
                                                 ->first();
                                             $set('total_matrix', $matrix);
                                             $set('classification', $classification->name);
@@ -146,11 +149,11 @@ class InspectionResource extends Resource
                                     ->required(),
                                 Forms\Components\Select::make('maintenance_score_id')
                                     ->label('Maintenance Score')
-                                    ->options(Parameter::whereGroupId(Parameter::SCORE_MAINTENANCE)->pluck('value', 'id'))
+                                    ->options(Parameter::active()->whereGroupId(Parameter::SCORE_MAINTENANCE)->pluck('value', 'id'))
                                     ->afterStateUpdated(function (Closure $get, Closure $set, $state) {
                                         if ($get('condition_score_id') && $state != null) {
                                             $matrix = Parameter::find($state)->value * Parameter::find($get('condition_score_id'))->value;
-                                            $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
+                                            $classification = Parameter::active()->whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
                                                 ->first();
                                             $set('total_matrix', $matrix);
                                             $set('classification', $classification->name);
@@ -179,7 +182,7 @@ class InspectionResource extends Resource
                                 if ($get('condition_score_id') && $get('maintenance_score_id')) {
                                     $score = Parameter::whereIn('id', [$get('condition_score_id'), $get('maintenance_score_id')])->get();
                                     $matrix = $score->firstWhere('id', $get('condition_score_id'))->value * $score->firstWhere('id', $get('maintenance_score_id'))->value;
-                                    $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
+                                    $classification = Parameter::active()->whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
                                         ->first();
                                     $set('classification', $classification->name);
                                 }
