@@ -77,7 +77,7 @@ class Inspection extends Model
         return $this->belongsTo(Parameter::class, 'sub_component_id');
     }
 
-    public function defect_id()
+    public function defect()
     {
         return $this->belongsTo(Parameter::class, 'defect_id');
     }

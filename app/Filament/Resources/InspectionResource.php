@@ -202,6 +202,8 @@ class InspectionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID'),
                 Tables\Columns\TextColumn::make('project.college_block')
                     ->label('Name College')
                     ->description(fn (Model $record): ?string => $record->user->name)
@@ -211,18 +213,16 @@ class InspectionResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('component.name')
-                    ->description(function (Model $record): string {
-                        return $record->subcomponent->name;
-                    })
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('subcomponent.name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_matrix')
                     ->label('Total Matrix')
                     ->alignCenter()
-                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('classification.name')
-                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->date(),
