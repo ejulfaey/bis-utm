@@ -19,6 +19,7 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Model;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class InspectionResource extends Resource
 {
@@ -201,6 +202,8 @@ class InspectionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID'),
@@ -235,6 +238,7 @@ class InspectionResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                FilamentExportBulkAction::make('export'),
             ]);
     }
 

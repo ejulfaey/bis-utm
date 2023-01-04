@@ -18,6 +18,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class InspectionStructuralRelationManager extends RelationManager
 {
@@ -119,14 +120,15 @@ class InspectionStructuralRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_matrix')
                     ->label('Total Matrix')
-                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('classification.name')
-                    ->searchable()
                     ->sortable(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+            ])
+            ->bulkActions([
+                FilamentExportBulkAction::make('export'),
             ]);
     }
 }

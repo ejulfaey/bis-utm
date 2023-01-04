@@ -21,3 +21,7 @@ Route::middleware('guest')->group(function() {
     Route::get('login', [AuthController::class, 'login']);
     Route::name('login_post')->post('login_post', [AuthController::class, 'login_post']);
 });
+
+Route::name('test')->get('test', function() {
+    dd('test');
+});
