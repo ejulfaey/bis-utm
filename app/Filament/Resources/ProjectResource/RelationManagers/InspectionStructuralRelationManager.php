@@ -26,8 +26,6 @@ class InspectionStructuralRelationManager extends RelationManager
 
     protected static ?string $title = 'Structural Components';
 
-    public Model $ownerRecord;
-
     public static function form(Form $form): Form
     {
         return $form
@@ -134,5 +132,17 @@ class InspectionStructuralRelationManager extends RelationManager
             ->bulkActions([
                 FilamentExportBulkAction::make('export'),
             ]);
+    }
+
+    protected function getTableContentFooter(): ?View
+    {
+        $inspect = Inspection::whereComponentId(Parameter::COMP_STRUCTURAL)
+            ->get();
+
+        return view('inspection.summary', [
+            'total_matrix' => $inspect->sum('total_matrix'),
+            'total_defect' => $inspect->count(),
+            'overall' => number_format($inspect->sum('total_matrix') / $inspect->count(), 2),
+        ]);
     }
 }

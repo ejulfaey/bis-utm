@@ -12,9 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 use App\Models\Inspection;
-use App\Models\Project;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use App\Filament\Pages\Project;
+use App\Models\Parameter;
+use Illuminate\Contracts\View\View;
 
 class InspectionArchitecturalRelationManager extends RelationManager
 {
@@ -128,5 +130,17 @@ class InspectionArchitecturalRelationManager extends RelationManager
             ->bulkActions([
                 FilamentExportBulkAction::make('export'),
             ]);
+    }
+
+    protected function getTableContentFooter(): ?View
+    {
+        $inspect = Inspection::whereComponentId(Parameter::COMP_ARCHITECTURAL)
+            ->get();
+
+        return view('inspection.summary', [
+            'total_matrix' => $inspect->sum('total_matrix'),
+            'total_defect' => $inspect->count(),
+            'overall' => number_format($inspect->sum('total_matrix') / $inspect->count(), 2),
+        ]);
     }
 }

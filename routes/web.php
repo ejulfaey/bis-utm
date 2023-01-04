@@ -22,7 +22,3 @@ Route::middleware('guest')->group(function() {
     Route::get('login', [AuthController::class, 'login']);
     Route::name('login_post')->post('login_post', [AuthController::class, 'login_post']);
 });
-
-Route::name('project.')->prefix('project')->group(function() {
-    Route::name('create')->get('create', [CreateProject::class]);
-});
