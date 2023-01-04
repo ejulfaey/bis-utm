@@ -101,6 +101,10 @@ class InspectionArchitecturalRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('project.college_block')
                     ->label('Name College')
                     ->searchable()
