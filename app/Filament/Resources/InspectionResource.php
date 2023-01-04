@@ -41,8 +41,10 @@ class InspectionResource extends Resource
                                 $project = Project::find(request()->query('ownerRecord'));
                                 return $project?->name;
                             })
-                            ->afterStateHydrated(function (callable $set, Model $record) {
-                                $set('project', $record->project->name);
+                            ->afterStateHydrated(function (callable $set, ?Model $record, Component $livewire) {
+                                if ($livewire instanceof Pages\EditInspection) {
+                                    $set('project', $record?->project->name);
+                                }
                             })
                             ->columnSpanFull()
                             ->disabled(true),
@@ -52,8 +54,9 @@ class InspectionResource extends Resource
                                 $project = Project::find(request()->query('ownerRecord'));
                                 return $project?->user?->name;
                             })
-                            ->afterStateHydrated(function (callable $set, Model $record) {
-                                $set('assessor', $record->project->user->name);
+                            ->afterStateHydrated(function (callable $set, ?Model $record, Component $livewire) {
+                                if ($livewire instanceof Pages\EditInspection)
+                                    $set('assessor', $record?->project->user->name);
                             })
                             ->disabled(true),
                         Forms\Components\TextInput::make('college_block')
@@ -62,8 +65,9 @@ class InspectionResource extends Resource
                                 $project = Project::find(request()->query('ownerRecord'));
                                 return $project?->college_block;
                             })
-                            ->afterStateHydrated(function (callable $set, Model $record) {
-                                $set('college_block', $record->project->college_block);
+                            ->afterStateHydrated(function (callable $set, ?Model $record, Component $livewire) {
+                                if ($livewire instanceof Pages\EditInspection)
+                                    $set('college_block', $record?->project->college_block);
                             })
                             ->disabled(true),
                         Forms\Components\TextInput::make('total_floor')
@@ -71,8 +75,9 @@ class InspectionResource extends Resource
                                 $project = Project::find(request()->query('ownerRecord'));
                                 return $project?->total_floor;
                             })
-                            ->afterStateHydrated(function (callable $set, Model $record) {
-                                $set('total_floor', $record->project->total_floor);
+                            ->afterStateHydrated(function (callable $set, ?Model $record, Component $livewire) {
+                                if ($livewire instanceof Pages\EditInspection)
+                                    $set('total_floor', $record?->project->total_floor);
                             })
                             ->disabled(true),
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Livewire\CreateProject;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +23,6 @@ Route::middleware('guest')->group(function() {
     Route::name('login_post')->post('login_post', [AuthController::class, 'login_post']);
 });
 
-Route::name('test')->get('test', function() {
-    dd('test');
+Route::name('project.')->prefix('project')->group(function() {
+    Route::name('create')->get('create', [CreateProject::class]);
 });

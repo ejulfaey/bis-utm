@@ -7,6 +7,7 @@ use Filament\Widgets\TableWidget as PageWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables;
 use Filament\Forms;
+use Filament\Pages;
 
 class ListProject extends PageWidget
 {
@@ -25,12 +26,7 @@ class ListProject extends PageWidget
     {
         return [
             Tables\Actions\CreateAction::make()
-                ->label('Create Project')
-                ->form([
-                    Forms\Components\TextInput::make('name')
-                        ->maxLength(255)
-                        ->required(),
-                ]),
+                ->label('Create Project'),
 
         ];
     }
