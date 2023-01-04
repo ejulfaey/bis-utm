@@ -29,6 +29,8 @@ class InspectionResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -202,8 +204,6 @@ class InspectionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->headerActions([
-            ])
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID'),

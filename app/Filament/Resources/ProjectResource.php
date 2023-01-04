@@ -118,6 +118,7 @@ class ProjectResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\InspectionsRelationManager::class,
             RelationManagers\InspectionArchitecturalRelationManager::class,
             RelationManagers\InspectionStructuralRelationManager::class,
             RelationManagers\InspectionBuildingRelationManager::class,
