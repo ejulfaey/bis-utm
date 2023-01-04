@@ -7,27 +7,24 @@ use App\Filament\Resources\InspectionResource\RelationManagers;
 use App\Models\Inspection;
 use App\Models\Parameter;
 use App\Models\Project;
-use App\Models\Role;
-use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Eloquent\Model;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Component;
 
 class InspectionResource extends Resource
 {
+
     protected static ?string $model = Inspection::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-list';
 
-    protected static ?int $navigationSort = 3;
+    // protected static ?int $navigationSort = 3;
 
     protected static bool $shouldRegisterNavigation = false;
 
@@ -38,48 +35,50 @@ class InspectionResource extends Resource
                 Section::make('Project Info')
                     ->description('Description')
                     ->schema([
-                        Forms\Components\Select::make('project_id')
+                        Forms\Components\TextInput::make('project')
                             ->label('Project')
-                            ->options(Project::all()->pluck('name', 'id'))
-                            ->placeholder('Select a project')
-                            ->searchable()
-                            ->afterStateUpdated(function (Closure $set, $state) {
-                                if ($state) {
-                                    $project = Project::find($state);
-                                    $set('college_block', $project->college_block);
-                                    $set('assessor', $project->user->name);
-                                } else {
-                                    $set('college_block', null);
-                                    $set('assessor', null);
-                                }
+                            ->default(function () {
+                                $project = Project::find(request()->query('ownerRecord'));
+                                return $project?->name;
                             })
-                            ->reactive()
-                            ->disabledOn('edit')
-                            ->columnSpan('full')
-                            ->required(),
-                        Forms\Components\TextInput::make('assessor')
-                            ->label('Assessor')
-                            ->afterStateHydrated(function (callable $get, callable $set) {
-                                $project = Project::find($get('project_id'));
-                                if ($project) $set('assessor', $project->user->name);
+                            ->afterStateHydrated(function (callable $set, Model $record) {
+                                $set('project', $record->project->name);
                             })
-                            ->hiddenOn('create')
+                            ->columnSpanFull()
                             ->disabled(true),
                         Forms\Components\TextInput::make('assessor')
                             ->label('Assessor')
-                            ->hiddenOn('edit')
+                            ->default(function () {
+                                $project = Project::find(request()->query('ownerRecord'));
+                                return $project?->user?->name;
+                            })
+                            ->afterStateHydrated(function (callable $set, Model $record) {
+                                $set('assessor', $record->project->user->name);
+                            })
                             ->disabled(true),
                         Forms\Components\TextInput::make('college_block')
                             ->label('College/Block')
-                            ->afterStateHydrated(function (callable $get, callable $set) {
-                                $project = Project::find($get('project_id'));
-                                if ($project) $set('college_block', $project->college_block);
+                            ->default(function () {
+                                $project = Project::find(request()->query('ownerRecord'));
+                                return $project?->college_block;
+                            })
+                            ->afterStateHydrated(function (callable $set, Model $record) {
+                                $set('college_block', $record->project->college_block);
+                            })
+                            ->disabled(true),
+                        Forms\Components\TextInput::make('total_floor')
+                            ->default(function () {
+                                $project = Project::find(request()->query('ownerRecord'));
+                                return $project?->total_floor;
+                            })
+                            ->afterStateHydrated(function (callable $set, Model $record) {
+                                $set('total_floor', $record->project->total_floor);
                             })
                             ->disabled(true),
 
                     ])
-                    ->collapsible()
-                    ->columns(2),
+                    ->collapsed(false)
+                    ->columns(3),
                 Section::make('BCA Inventory')
                     ->description('Component')
                     ->schema([
@@ -135,7 +134,7 @@ class InspectionResource extends Resource
                                 Forms\Components\Select::make('condition_score_id')
                                     ->label('Condition Score')
                                     ->options(Parameter::active()->whereGroupId(Parameter::SCORE_CONDITION)->pluck('value', 'id'))
-                                    ->afterStateUpdated(function (Closure $get, Closure $set, $state) {
+                                    ->afterStateUpdated(function (callable $get, callable $set, $state) {
                                         if ($get('maintenance_score_id') && $state != null) {
                                             $matrix = Parameter::find($state)->value * Parameter::find($get('maintenance_score_id'))->value;
                                             $classification = Parameter::active()->whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
@@ -153,7 +152,7 @@ class InspectionResource extends Resource
                                 Forms\Components\Select::make('maintenance_score_id')
                                     ->label('Maintenance Score')
                                     ->options(Parameter::active()->whereGroupId(Parameter::SCORE_MAINTENANCE)->pluck('value', 'id'))
-                                    ->afterStateUpdated(function (Closure $get, Closure $set, $state) {
+                                    ->afterStateUpdated(function (callable $get, callable $set, $state) {
                                         if ($get('condition_score_id') && $state != null) {
                                             $matrix = Parameter::find($state)->value * Parameter::find($get('condition_score_id'))->value;
                                             $classification = Parameter::active()->whereGroupId(Parameter::CLASSIFICATION)->whereRaw('? between `from` and `to`', $matrix)
@@ -198,47 +197,6 @@ class InspectionResource extends Resource
                         'sm' => 1,
                         'md' => 2,
                     ])
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('ID'),
-                Tables\Columns\TextColumn::make('project.college_block')
-                    ->label('Name College')
-                    ->description(fn (Model $record): ?string => $record->user->name)
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('location.name')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('component.name')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('subcomponent.name')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('total_matrix')
-                    ->label('Total Matrix')
-                    ->alignCenter()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('classification.name')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('date')
-                    ->date(),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                FilamentExportBulkAction::make('export'),
             ]);
     }
 

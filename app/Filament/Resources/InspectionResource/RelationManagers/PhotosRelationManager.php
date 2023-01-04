@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\InspectionResource\RelationManagers;
 
+use App\Models\InspectionPhoto;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -9,6 +10,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Livewire\Component;
 use Livewire\TemporaryUploadedFile;
 
 class PhotosRelationManager extends RelationManager
@@ -33,6 +35,15 @@ class PhotosRelationManager extends RelationManager
                     ->required(),
                 Forms\Components\TextInput::make('description')
                     ->columnSpan('full')
+                    ->default(function(Component $livewire) {
+
+                        $id = InspectionPhoto::whereInspectionId($livewire->ownerRecord->id)
+                        ->oldest()
+                        ->first();
+
+                        return 'Description ' . $id->id++;
+
+                    })
                     ->maxLength(255)
                     ->required(),
             ]);
