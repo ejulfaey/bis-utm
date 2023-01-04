@@ -20,6 +20,8 @@ class InspectionBuildingRelationManager extends RelationManager
 {
     protected static string $relationship = 'inspection_building';
 
+    protected static ?string $title = 'Building Service Components';
+
     public static function form(Form $form): Form
     {
         return $form

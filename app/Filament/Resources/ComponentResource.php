@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ComponentResource extends Resource
@@ -29,6 +30,11 @@ class ComponentResource extends Resource
     protected static ?string $slug = 'component';
 
     protected static ?int $navigationSort = 1;
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['id', 'name'];
+    }
 
     public static function getEloquentQuery(): Builder
     {

@@ -17,6 +17,7 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Livewire\TemporaryUploadedFile;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class ProjectResource extends Resource
 {
@@ -81,13 +82,16 @@ class ProjectResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->description(fn (Project $record): string => $record->user->email)
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Assessor')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('building_type.name')
-                    ->description(fn (Project $record): string => 'Total Floor: ' . $record->total_floor)
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('total_floor'),
                 Tables\Columns\TextColumn::make('inspections_count')
                     ->counts('inspections')
                     ->label('Total Inspection(s)')
@@ -107,6 +111,7 @@ class ProjectResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                FilamentExportBulkAction::make('export'),
             ]);
     }
 

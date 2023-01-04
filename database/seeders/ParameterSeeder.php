@@ -66,6 +66,7 @@ class ParameterSeeder extends Seeder
             ['group_id' => 4, 'name' => 'Roofing system', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Wall', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Foundation', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
+
             ['group_id' => 4, 'name' => 'Building finishes-(Beam)', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Building finishes-(Column)', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Building finishes-(Slab)', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
@@ -75,7 +76,8 @@ class ParameterSeeder extends Seeder
             ['group_id' => 4, 'name' => 'Door and frame', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Window and frame', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Ceiling', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 4, 'name' => 'Hose reel', 'parent_id' => 10, 'created_at' => now(), 'updated_at' => now()],
+
+            ['group_id' => 4, 'name' => 'Hose reel', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Fire extinguisher system', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Fire alarm system', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Socket/Switch', 'parent_id' => 11, 'created_at' => now(), 'updated_at' => now()],
