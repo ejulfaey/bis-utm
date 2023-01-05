@@ -16,6 +16,7 @@ use App\Models\Parameter;
 use App\Models\Project;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
 class InspectionBuildingRelationManager extends RelationManager
@@ -132,14 +133,14 @@ class InspectionBuildingRelationManager extends RelationManager
             ]);
     }
 
-    protected function getTableContentFooter(): ?View
+    protected function getTableHeader(): View|Htmlable|null
     {
         $inspect = Inspection::whereComponentId(Parameter::COMP_BUILDING_SERVICE)
             ->get();
 
-        return view('inspection.summary', [
-            'total_matrix' => $inspect->sum('total_matrix'),
-            'total_defect' => $inspect->count(),
+        return view('widgets.summary-card', [
+            'matrix' => $inspect->sum('total_matrix'),
+            'defect' => $inspect->count(),
             'overall' => number_format($inspect->sum('total_matrix') / $inspect->count(), 2),
         ]);
     }

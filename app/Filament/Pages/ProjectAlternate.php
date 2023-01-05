@@ -13,7 +13,7 @@ class ProjectAlternate extends Page
 
     protected static ?string $navigationLabel = 'Manage Projects';
 
-    protected static bool $shouldRegisterNavigation = true;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected function getHeaderWidgets(): array
     {
