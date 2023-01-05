@@ -37,11 +37,8 @@ class PhotosRelationManager extends RelationManager
                     ->columnSpan('full')
                     ->default(function(Component $livewire) {
 
-                        $id = InspectionPhoto::whereInspectionId($livewire->ownerRecord->id)
-                        ->oldest()
-                        ->first();
-
-                        return 'Description ' . $id->id++;
+                        $counter = InspectionPhoto::whereInspectionId($livewire->ownerRecord->id)->count();
+                        return 'Description ' . ($counter > 0 ? $counter++ : '0');
 
                     })
                     ->maxLength(255)

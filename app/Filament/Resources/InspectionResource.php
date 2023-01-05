@@ -14,8 +14,10 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
+use Filament\Resources\Table;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
+use Filament\Tables;
 
 class InspectionResource extends Resource
 {
@@ -27,6 +29,37 @@ class InspectionResource extends Resource
     // protected static ?int $navigationSort = 3;
 
     protected static bool $shouldRegisterNavigation = false;
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID'),
+                Tables\Columns\TextColumn::make('project.college_block')
+                    ->label('Name College')
+                    ->description(fn (Model $record): ?string => $record->user->name)
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('location.name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('component.name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('subcomponent.name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('total_matrix')
+                    ->label('Total Matrix')
+                    ->alignCenter()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('classification.name')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->date(),                
+            ]);
+    }
 
     public static function form(Form $form): Form
     {

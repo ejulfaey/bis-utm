@@ -70,6 +70,7 @@ class InspectionsRelationManager extends RelationManager
                 Tables\Actions\DeleteBulkAction::make()
                     ->successNotificationTitle('Inspection has been deleted'),
                 FilamentExportBulkAction::make('export'),
-            ]);
+            ])
+            ->defaultSort('date', 'desc');
     }
 }

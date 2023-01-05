@@ -3,8 +3,7 @@
 namespace App\Filament\Resources\InspectionResource\Pages;
 
 use App\Filament\Resources\InspectionResource;
-use App\Models\Project;
-use Filament\Pages\Actions;
+use App\Models\Parameter;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Arr;
 
@@ -26,6 +25,7 @@ class CreateInspection extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['classification_id'] = Parameter::firstWhere('name', $data['classification'])->id;
         $data['project_id'] = $this->id;
         $data['user_id'] = auth()->id();
         $data = Arr::except($data, ['project', 'assessor', 'college_block', 'total_floor', 'total_matrix', 'classification']);

@@ -28,6 +28,7 @@ return new class extends Migration
             $table->integer('defect_id');
             $table->integer('condition_score_id');
             $table->integer('maintenance_score_id');
+            $table->integer('classification_id');
             $table->text('remark')->nullable();
             $table->softDeletes();
             $table->timestamps();

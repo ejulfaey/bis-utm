@@ -123,24 +123,65 @@ class InspectionArchitecturalRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('classification.name')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->sortable(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 FilamentExportBulkAction::make('export'),
-            ]);
+            ])
+            ->defaultSort('date', 'desc');
     }
+
+    // public function mountInteractsWithTable(): void
+    // {
+    //     $this->emit('updateChart', [
+    //         'data' => 1,
+    //     ]);
+    // }
 
     protected function getTableHeader(): View|Htmlable|null
     {
-        $inspect = Inspection::whereComponentId(Parameter::COMP_ARCHITECTURAL)
+        $inspect = Inspection::with('classification', 'location', 'subcomponent')
+            ->whereComponentId(Parameter::COMP_ARCHITECTURAL)
+            ->whereProjectId($this->ownerRecord->id)
             ->get();
+
+        $chart1 = [
+            'label' => Parameter::whereGroupId(Parameter::CLASSIFICATION)->pluck('name')->toArray(),
+            'data' => [],
+        ];
+
+        $chart2 = [
+            'label' => Parameter::whereGroupId(Parameter::LOCATION)->pluck('name')->toArray(),
+            'data' => [],
+        ];
+
+        $chart3 = [
+            'label' => Parameter::whereGroupId(Parameter::SUBCOMPONENT)
+                ->whereParentId(Parameter::COMP_ARCHITECTURAL)
+                ->pluck('name')->toArray(),
+            'data' => [],
+        ];
+
+        foreach ($chart1['label'] as $label)
+            array_push($chart1['data'], $inspect->where('classification.name', $label)->count());
+
+        foreach ($chart2['label'] as $label)
+            array_push($chart2['data'], $inspect->where('location.name', $label)->count());
+
+        foreach ($chart3['label'] as $label)
+            array_push($chart3['data'], $inspect->where('subcomponent.name', $label)->count());
 
         return view('widgets.summary-card', [
             'matrix' => $inspect->sum('total_matrix'),
             'defect' => $inspect->count(),
-            'overall' => number_format($inspect->sum('total_matrix') / $inspect->count(), 2),
+            'overall' => $inspect->count() > 0 ? number_format($inspect->sum('total_matrix') / $inspect->count(), 2) : 0,
+            'chart1' => $chart1,
+            'chart2' => $chart2,
+            'chart3' => $chart3,
         ]);
     }
 }

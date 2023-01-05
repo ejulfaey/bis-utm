@@ -25,6 +25,7 @@ class Inspection extends Model
         'defect_id',
         'condition_score_id',
         'maintenance_score_id',
+        'classification_id',
         'remark',
     ];
 
@@ -38,13 +39,6 @@ class Inspection extends Model
     public function getTotalMatrixAttribute()
     {
         return $this->condition_score->value * $this->maintenance_score->value;
-    }
-
-    public function getClassificationAttribute()
-    {
-        return Parameter::whereGroupId(Parameter::CLASSIFICATION)
-            ->whereRaw('? between `from` and `to`', $this->total_matrix)
-            ->first();
     }
 
     public function project()
@@ -90,6 +84,11 @@ class Inspection extends Model
     public function maintenance_score()
     {
         return $this->belongsTo(Parameter::class, 'maintenance_score_id');
+    }
+
+    public function classification()
+    {
+        return $this->belongsTo(Parameter::class, 'classification_id');
     }
 
     public function photos()

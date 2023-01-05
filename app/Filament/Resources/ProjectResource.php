@@ -27,6 +27,11 @@ class ProjectResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->latest();
+    }
+
     protected static function shouldRegisterNavigation(): bool
     {
         return in_array(auth()->user()->role_id, [Role::SUPERADMIN, Role::ADMIN]);
