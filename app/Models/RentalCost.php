@@ -10,8 +10,12 @@ class RentalCost extends Model
     use HasFactory;
 
     protected $fillable = [
-        'room_type_id',
         'cost_room',
         'no_of_room',
     ];
+
+    public function getTotalRentalAttribute()
+    {
+        return $this->cost_room * $this->no_of_room;
+    }
 }

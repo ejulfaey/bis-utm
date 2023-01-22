@@ -15,9 +15,8 @@ return new class extends Migration
     {
         Schema::create('rental_costs', function (Blueprint $table) {
             $table->id();
-            $table->integer('room_type_id');
-            $table->decimal('cost_room');
-            $table->decimal('no_of_room');
+            $table->decimal('cost_room')->default(0);
+            $table->integer('no_of_room')->default(1);
             $table->timestamps();
         });
     }

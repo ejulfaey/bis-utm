@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Livewire\CreateProject;
 use Illuminate\Support\Facades\Route;
 
 /*

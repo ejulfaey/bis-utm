@@ -23,6 +23,7 @@ class Parameter extends Model
     public const SCORE_CONDITION = 8;
     public const SCORE_MAINTENANCE = 9;
     public const CLASSIFICATION_BUILDING = 10;
+    public const ROOM_TYPE = 11;
 
     public const COMP_STRUCTURAL = 9;
     public const COMP_ARCHITECTURAL = 10;

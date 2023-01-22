@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Http\Livewire\CalculatorMainTab;
 use Illuminate\Support\ServiceProvider;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,14 @@ class AppServiceProvider extends ServiceProvider
                     ->label('References')
                     ->collapsed(),
             ]);
+
+            Filament::registerNavigationItems([
+                NavigationItem::make('Analytics')
+                    ->url('/calculator-tab')
+                    ->icon('heroicon-o-presentation-chart-line')
+                    ->activeIcon('heroicon-s-presentation-chart-line')
+            ]);
+
         });
     }
 }

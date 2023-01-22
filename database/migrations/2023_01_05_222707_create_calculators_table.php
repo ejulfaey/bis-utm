@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('calculators', function (Blueprint $table) {
             $table->id();
-            $table->decimal('e_energy_of_cosumption');
-            $table->integer('e_duration_of_consumption');
-            $table->decimal('e_tariff');
-            $table->decimal('w_usage_of_water');
-            $table->decimal('w_no_of_occupants');
-            $table->decimal('w_tariff');
+            $table->decimal('e_energy_of_consumption')->default(0);
+            $table->integer('e_duration_of_consumption')->default(0);
+            $table->decimal('e_tariff')->default(0);
+            $table->decimal('w_usage_of_water')->default(0);
+            $table->decimal('w_no_of_occupants')->default(0);
+            $table->decimal('w_tariff')->default(0);
             $table->timestamps();
         });
     }

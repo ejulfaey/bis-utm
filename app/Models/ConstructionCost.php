@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class ConstructionCost extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'area_of_building',
@@ -21,4 +23,17 @@ class ConstructionCost extends Model
         'total_cost',
         'initial_cost',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->setDescriptionForEvent(fn (string $eventName) => "Construction cost has been {$eventName}");
+    }
+
+
+    public function type()
+    {
+        return $this->belongsTo(Parameter::class, 'building_type_id');
+    }
 }

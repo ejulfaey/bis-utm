@@ -54,6 +54,11 @@ class ParameterSeeder extends Seeder
             ['group_id' => 7, 'name' => 'Reinforced Concrete - Mid-rise building', 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 7, 'name' => 'Reinforced Concrete - High-rise building', 'created_at' => now(), 'updated_at' => now()],
 
+            ['group_id' => 11, 'name' => 'Single Room', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 11, 'name' => 'Double Room', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 11, 'name' => 'Twin Room', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 11, 'name' => 'Master Room', 'created_at' => now(), 'updated_at' => now()],
+
         ]);
 
         DB::table('parameters')->insert([
