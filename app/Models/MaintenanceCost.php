@@ -11,12 +11,18 @@ class MaintenanceCost extends Model
 
     protected $fillable = [
         'type',
-        'location_id',
+        'no',
+        'building_section',
         'subcomponent_id',
         'area',
         'cost',
         'no_of_unit',
         'total_cost',
     ];
+
+    public function component()
+    {
+        return $this->belongsTo(Parameter::class, 'subcomponent_id');
+    }
 
 }

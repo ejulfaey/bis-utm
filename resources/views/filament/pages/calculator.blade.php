@@ -15,12 +15,7 @@
             <livewire:construction-form />
         </div>
         <div @class(['hidden'=> $activeTab != 'maintenance' ]) class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-            <form wire:submit.prevent="saveConstruction">
-                {{ $this->maintenanceForm }}
-                <x-filament::button type="submit" class="mt-4">
-                    Save
-                </x-filament::button>
-            </form>
+            <livewire:maintenance-form />
         </div>
         <div @class(['hidden'=> $activeTab != 'operating' ]) class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
             <livewire:operating-form />
@@ -30,9 +25,3 @@
         </div>
     </div>
 </x-filament::page>
-@push('scripts')
-<script>
-
-
-</script>
-@endpush

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Http\Livewire\MaintenanceForm;
 use App\Http\Livewire\OperatingForm;
 use App\Http\Livewire\RentalForm;
 use App\Models\Calculator as ModelsCalculator;
@@ -29,7 +30,7 @@ class Calculator extends Page implements Forms\Contracts\HasForms
 
     protected static ?int $navigationSort = 3;
 
-    public $activeTab = 'rental';
+    public $activeTab = 'maintenance';
 
     public $tabs = [
         'construction' => 'Construction Cost',
@@ -47,10 +48,7 @@ class Calculator extends Page implements Forms\Contracts\HasForms
     {
         return [
             'constructionForm' => ConstructionForm::class,
-            'maintenanceForm' => $this->makeForm()
-                ->schema([
-                    // 
-                ]),
+            'maintenanceForm' => MaintenanceForm::class,
             'operatingForm' => OperatingForm::class,
             'rentalForm' => RentalForm::class,
         ];

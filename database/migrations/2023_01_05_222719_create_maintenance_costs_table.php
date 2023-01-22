@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('maintenance_costs', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
-            $table->integer('location_id');
+            $table->string('type')->nullable();
+            $table->decimal('no');
+            $table->string('building_section');
             $table->integer('subcomponent_id');
             $table->decimal('area');
             $table->decimal('cost');
