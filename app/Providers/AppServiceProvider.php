@@ -41,13 +41,6 @@ class AppServiceProvider extends ServiceProvider
                     ->collapsed(),
             ]);
 
-            Filament::registerNavigationItems([
-                NavigationItem::make('Analytics')
-                    ->url('/calculator-tab')
-                    ->icon('heroicon-o-presentation-chart-line')
-                    ->activeIcon('heroicon-s-presentation-chart-line')
-            ]);
-
         });
     }
 }

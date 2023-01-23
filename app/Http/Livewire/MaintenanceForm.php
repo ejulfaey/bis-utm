@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 
@@ -24,6 +25,7 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
     public $cost;
     public $no_of_unit;
     public $total_cost;
+    public $isEdit = null;
 
     protected function getTableQuery(): Builder|Relation
     {
@@ -80,10 +82,14 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
 
     public function submit()
     {
-        MaintenanceCost::create($this->form->getState());
+        if ($this->isEdit)
+            MaintenanceCost::whereId($this->isEdit)
+                ->update($this->form->getState());
+        else
+            MaintenanceCost::create($this->form->getState());
 
         Notification::make()
-            ->title('Created successfully')
+            ->title( $this->isEdit ? 'Updated successfully' : 'Created successfully')
             ->icon('heroicon-o-check-circle')
             ->iconColor('success')
             ->send();
@@ -92,20 +98,19 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
     protected function getTableColumns(): array
     {
         return [
-            Tables\Columns\TextInputColumn::make('no')
+            Tables\Columns\TextColumn::make('no')
                 ->label('No.')
                 ->searchable(),
-            Tables\Columns\TextInputColumn::make('building_section')
+            Tables\Columns\TextColumn::make('building_section')
                 ->label('Building Section')
                 ->searchable(),
-            Tables\Columns\SelectColumn::make('component.name')
-                ->label('Building Component')
-                ->options(Parameter::whereGroupId(Parameter::SUBCOMPONENT)->pluck('name', 'id')),
-            Tables\Columns\TextInputColumn::make('area')
+            Tables\Columns\TextColumn::make('component.name')
+                ->label('Building Component'),
+            Tables\Columns\TextColumn::make('area')
                 ->label('Area (m2)'),
-            Tables\Columns\TextInputColumn::make('cost')
+            Tables\Columns\TextColumn::make('cost')
                 ->label('Cost (RM)'),
-            Tables\Columns\TextInputColumn::make('no_of_unit')
+            Tables\Columns\TextColumn::make('no_of_unit')
                 ->label('No. of unit'),
             Tables\Columns\TextColumn::make('total_cost')
                 ->label('Total Cost (RM)'),
@@ -113,9 +118,39 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
         ];
     }
 
+    public function fillForm($record): void
+    {
+        $this->isEdit = $record->id;
+        $this->form->fill([
+            'no' => $record->no,
+            'building_section' => $record->building_section,
+            'subcomponent_id' => $record->subcomponent_id,
+            'area' => $record->area,
+            'cost' => $record->cost,
+            'no_of_unit' => $record->no_of_unit,
+            'total_cost' => $record->total_cost,
+        ]);
+    }
+
+    public function cancelEdit(): void
+    {
+        $this->isEdit = null;
+        $this->form->fill([
+            'no' => '',
+            'building_section' => '',
+            'subcomponent_id' => '',
+            'area' => '',
+            'cost' => '',
+            'no_of_unit' => '',
+            'total_cost' => '',
+        ]);
+    }
+
     protected function getTableActions(): array
     {
         return [
+            Tables\Actions\EditAction::make()
+                ->action(fn (Model $record) => $this->fillForm($record)),
             Tables\Actions\DeleteAction::make(),
         ];
     }

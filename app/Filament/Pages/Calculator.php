@@ -30,7 +30,7 @@ class Calculator extends Page implements Forms\Contracts\HasForms
 
     protected static ?int $navigationSort = 3;
 
-    public $activeTab = 'maintenance';
+    public $activeTab = 'construction';
 
     public $tabs = [
         'construction' => 'Construction Cost',
