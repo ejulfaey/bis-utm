@@ -56,5 +56,4 @@ class Project extends Model
     {
         return $this->inspections()->where('component_id', Parameter::COMP_BUILDING_SERVICE);
     }
-
 }

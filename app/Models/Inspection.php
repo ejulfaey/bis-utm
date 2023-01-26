@@ -11,6 +11,10 @@ class Inspection extends Model
 {
     use HasFactory, LogsActivity;
 
+    public const WEIGHTAGE_A = 66.67;
+    public const WEIGHTAGE_S = 22.22;
+    public const WEIGHTAGE_B = 11.11;
+
     protected $fillable = [
         'project_id',
         'user_id',

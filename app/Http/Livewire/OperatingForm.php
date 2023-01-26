@@ -133,11 +133,12 @@ class OperatingForm extends Component implements Forms\Contracts\HasForms
 
     public function updateField($state, $type): void
     {
-        if ($type == 1 && $state) {
+        if ($type == 1 && $this->e_energy_of_consumption && $this->e_duration_of_consumption && $this->e_tariff) {
             $this->total_energy_usage = $this->e_energy_of_consumption * $this->e_duration_of_consumption;
             $this->daily_electrical_cost = $this->total_energy_usage * $this->e_tariff;
             $this->yearly_electrical_cost = $this->daily_electrical_cost * 365;
-        } else {
+        }
+        if ($type != 1 && $this->w_usage_of_water && $this->w_no_of_occupants && $this->w_tariff) {
             $this->total_water_usage = $this->w_usage_of_water * $this->w_no_of_occupants;
             $this->daily_water_cost = $this->total_water_usage * $this->w_tariff;
             $this->yearly_water_cost = $this->daily_water_cost * 365;

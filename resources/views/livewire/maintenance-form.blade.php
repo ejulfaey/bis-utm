@@ -1,4 +1,4 @@
-<div class="space-y-8">
+<div class="flex flex-col space-y-8">
     <form wire:submit.prevent="submit">
         {{ $this->form }}
         <div class="mt-4 flex gap-x-2 justify-end">
@@ -13,4 +13,8 @@
         </div>
     </form>
     {{ $this->table }}
+    <div class="px-8 py-4 self-end bg-white border rounded-lg shadow-sm flex items-center gap-x-4">
+        <p>Overall Maintenance Cost (RM)</p>
+        <h2 class="text-xl font-semibold text-primary-500">{{ App\Models\MaintenanceCost::sum('total_cost') }}</h2>
+    </div>
 </div>

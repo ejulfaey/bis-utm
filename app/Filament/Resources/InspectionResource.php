@@ -57,7 +57,7 @@ class InspectionResource extends Resource
                 Tables\Columns\TextColumn::make('classification.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
-                    ->date(),                
+                    ->date(),
             ]);
     }
 
@@ -82,7 +82,7 @@ class InspectionResource extends Resource
                             ->columnSpanFull()
                             ->disabled(true),
                         Forms\Components\TextInput::make('assessor')
-                            ->label('Assessor')
+                            ->label('Project Leader')
                             ->default(function () {
                                 $project = Project::find(request()->query('ownerRecord'));
                                 return $project?->user?->name;
@@ -120,7 +120,7 @@ class InspectionResource extends Resource
                 Section::make('BCA Inventory')
                     ->description('Component')
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(4)
                             ->schema([
                                 Forms\Components\DatePicker::make('date')
                                     ->maxDate(today()->addDay())
@@ -134,6 +134,19 @@ class InspectionResource extends Resource
                                     ->label('Floor No.')
                                     ->required()
                                     ->maxLength(255),
+                                Forms\Components\TextInput::make('user.name')
+                                    ->label('Assessor')
+                                    ->hiddenOn('create')
+                                    ->disabled(),
+                                Forms\Components\TextInput::make('user_id')
+                                    ->label('Assessor')
+                                    ->default(auth()->user()->name)
+                                    ->hiddenOn('edit')
+                                    ->disabled(),
+                            ]),
+                        Grid::make(3)
+                            ->schema([
+
                                 Forms\Components\TextInput::make('unit_no')
                                     ->label('Unit No.')
                                     ->required()

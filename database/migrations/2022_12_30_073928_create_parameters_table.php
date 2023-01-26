@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('group_id');
-            $table->integer('value')->nullable();
+            $table->float('value')->nullable();
             $table->integer('parent_id')->nullable();
             $table->boolean('is_active')->default(1);
             $table->integer('from')->nullable();

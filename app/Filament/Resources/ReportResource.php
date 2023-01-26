@@ -4,7 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReportResource\Pages;
 use App\Filament\Resources\ReportResource\RelationManagers;
+use App\Models\Calculator;
+use App\Models\ConstructionCost;
+use App\Models\Inspection;
+use App\Models\MaintenanceCost;
+use App\Models\Parameter;
 use App\Models\Project;
+use App\Models\RentalCost;
 use App\Models\Report;
 use App\Models\Role;
 use Filament\Forms;
@@ -47,20 +53,55 @@ class ReportResource extends Resource
                             ->reactive()
                             ->afterStateUpdated(function ($state, callable $set) {
                                 $project = Project::find($state);
-                                $set('building_type_id', $project->building_type->name);
-                                $set('total_floor', $project->total_floor);
 
-                                // $set('architectural_score', $project->total_floor);
-                                // $set('building_score', $project->total_floor);
+                                if ($project) {
+
+                                    $set('building_type', $project->building_type->name);
+                                    $set('total_floor', $project->total_floor);
+
+                                    $initial_cost = ConstructionCost::firstWhere('building_type_id', $project->building_type_id);
+                                    $set('initial_cost', $initial_cost->total_cost);
+
+                                    $codes = [
+                                        'architectural',
+                                        'structural',
+                                        'building',
+                                    ];
+
+                                    $components = Parameter::select('id', 'name', 'value')
+                                        ->whereGroupId(Parameter::COMPONENT)
+                                        ->orderBy('name')
+                                        ->get();
+
+                                    $bca_score = 0;
+
+                                    foreach ($components as $index => $component) {
+                                        $inspects = Inspection::whereProjectId($state)
+                                            ->whereComponentId($component->id)
+                                            ->get();
+
+                                        $score = ($inspects->sum('total_matrix') / $inspects->count());
+                                        $percent = round($score / 16 * $component->value, 2);
+                                        $bca_score += $percent;
+
+                                        $set($codes[$index] . '_score', $score);
+                                        $set($codes[$index] . '_percent', $percent);
+                                    }
+                                    $set('bca_score', $bca_score);
+                                    $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION_BUILDING)
+                                        ->whereRaw("? between `from` and `to`", [round($bca_score)])
+                                        ->first();
+
+                                    $set('classification', $classification->name);
+                                }
                             })
                             ->required(),
                         Forms\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('area_of_building')
                                     ->numeric()
-                                    ->required()
-                                    ->reactive(),
-                                Forms\Components\TextInput::make('building_type_id')
+                                    ->helperText('In meter'),
+                                Forms\Components\TextInput::make('project.building_type.name')
                                     ->label('Type of building')
                                     ->disabled(),
                                 Forms\Components\TextInput::make('total_floor')
@@ -94,7 +135,7 @@ class ReportResource extends Resource
                                     ->label('BCA Score (%)')
                                     ->reactive()
                                     ->disabled(),
-                                Forms\Components\TextInput::make('classification')
+                                Forms\Components\TextInput::make('classification.name')
                                     ->label('Classification')
                                     ->disabled(),
                             ]),
@@ -103,19 +144,62 @@ class ReportResource extends Resource
                     ->schema([
                         Forms\Components\Grid::make(3)
                             ->schema([
-                                Forms\Components\TextInput::make('maintenace_cost')
+                                Forms\Components\TextInput::make('maintenance_cost')
                                     ->label('Cost of maintenance (RM)')
+                                    ->afterStateHydrated(function (callable $set) {
+
+                                        $cost = MaintenanceCost::sum('total_cost');
+                                        $set('maintenance_cost', $cost);
+                                    })
                                     ->disabled(),
                                 Forms\Components\TextInput::make('time_period')
                                     ->label('Time Period, t')
-                                    ->hint('in days')
-                                    ->numeric()
+                                    ->integer()
+                                    ->helperText('In Days')
                                     ->reactive()
+                                    ->afterStateUpdated(function (callable $get, callable $set, $state) {
+
+                                        if (!$state) {
+                                            $set('npv_maintenance', '');
+                                            $set('energy_usage', '');
+                                            $set('water_usage', '');
+                                            $set('rental_value', '');
+                                            $set('lcca', '');
+                                        }
+
+                                        if ($state && $get('discount_rate')) {
+                                            $npv = $get('maintenance_cost') * pow((1 + $get('discount_rate')), (-$state));
+                                            $set('npv_maintenance', $npv);
+                                        }
+
+                                        if ($state) {
+                                            $calculator = Calculator::find(1);
+                                            $energy_usage = $calculator->daily_electrical_cost * $state;
+                                            $water_usage = $calculator->daily_water_cost * $state;
+                                            $rental_value = RentalCost::find(1)->cost_room;
+
+                                            $set('energy_usage', $energy_usage);
+                                            $set('water_usage', $water_usage);
+                                            $set('rental_value', $rental_value);
+
+                                            $lcca = $get('initial_cost') + $get('npv_maintenance') + $get('energy_usage')
+                                                + $get('water_usage') + $get('rental_value');
+
+                                            $set('lcca', round($lcca, 2));
+                                        }
+                                    })
                                     ->required(),
                                 Forms\Components\TextInput::make('discount_rate')
                                     ->label('Discount rate (%)')
                                     ->numeric()
                                     ->reactive()
+                                    ->afterStateUpdated(function (callable $get, callable $set, $state) {
+
+                                        if ($state && $get('time_period')) {
+                                            $npv = $get('maintenance_cost') * pow((1 + $state), (-$get('time_period')));
+                                            $set('npv_maintenance', $npv);
+                                        }
+                                    })
                                     ->required(),
                             ]),
                         Forms\Components\TextInput::make('npv_maintenance')
