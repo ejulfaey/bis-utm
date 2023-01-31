@@ -51,6 +51,50 @@ class ReportResource extends Resource
                             ->options(Project::orderBy('name')->pluck('name', 'id'))
                             ->searchable()
                             ->reactive()
+                            ->afterStateHydrated(function (callable $get, callable $set, $state) {
+                                $project = Project::find($state);
+
+                                if ($project) {
+
+                                    $set('building_type', $project->building_type->name);
+                                    $set('total_floor', $project->total_floor);
+
+                                    $initial_cost = ConstructionCost::firstWhere('building_type_id', $project->building_type_id);
+                                    $set('initial_cost', $initial_cost->total_cost);
+
+                                    $codes = [
+                                        'architectural',
+                                        'structural',
+                                        'building',
+                                    ];
+
+                                    $components = Parameter::select('id', 'name', 'value')
+                                        ->whereGroupId(Parameter::COMPONENT)
+                                        ->orderBy('name')
+                                        ->get();
+
+                                    $bca_score = 0;
+
+                                    foreach ($components as $index => $component) {
+                                        $inspects = Inspection::whereProjectId($state)
+                                            ->whereComponentId($component->id)
+                                            ->get();
+
+                                        $score = ($inspects->sum('total_matrix') / $inspects->count());
+                                        $percent = round($score / 16 * $component->value, 2);
+                                        $bca_score += $percent;
+
+                                        $set($codes[$index] . '_score', $score);
+                                        $set($codes[$index] . '_percent', $percent);
+                                    }
+                                    $set('bca_score', $bca_score);
+                                    $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION_BUILDING)
+                                        ->whereRaw("? between `from` and `to`", [round($bca_score)])
+                                        ->first();
+
+                                    $set('classification', $classification->name);
+                                }
+                            })
                             ->afterStateUpdated(function ($state, callable $set) {
                                 $project = Project::find($state);
 
@@ -101,7 +145,7 @@ class ReportResource extends Resource
                                 Forms\Components\TextInput::make('area_of_building')
                                     ->numeric()
                                     ->helperText('In meter'),
-                                Forms\Components\TextInput::make('project.building_type.name')
+                                Forms\Components\TextInput::make('building_type')
                                     ->label('Type of building')
                                     ->disabled(),
                                 Forms\Components\TextInput::make('total_floor')
@@ -135,7 +179,7 @@ class ReportResource extends Resource
                                     ->label('BCA Score (%)')
                                     ->reactive()
                                     ->disabled(),
-                                Forms\Components\TextInput::make('classification.name')
+                                Forms\Components\TextInput::make('classification')
                                     ->label('Classification')
                                     ->disabled(),
                             ]),
@@ -155,8 +199,38 @@ class ReportResource extends Resource
                                 Forms\Components\TextInput::make('time_period')
                                     ->label('Time Period, t')
                                     ->integer()
-                                    ->helperText('In Days')
+                                    ->helperText('In Years')
                                     ->reactive()
+                                    ->afterStateHydrated(function (callable $get, callable $set, $state) {
+                                        if (!$state) {
+                                            $set('npv_maintenance', '');
+                                            $set('energy_usage', '');
+                                            $set('water_usage', '');
+                                            $set('rental_value', '');
+                                            $set('lcca', '');
+                                        }
+
+                                        if ($state && $get('discount_rate')) {
+                                            $npv = $get('maintenance_cost') * pow((1 + $get('discount_rate')), (-$state));
+                                            $set('npv_maintenance', $npv);
+                                        }
+
+                                        if ($state) {
+                                            $calculator = Calculator::find(1);
+                                            $energy_usage = $calculator->yearly_electrical_cost * $state;
+                                            $water_usage = $calculator->yearly_water_cost * $state;
+                                            $rental_value = RentalCost::find(1)->cost_room;
+
+                                            $set('energy_usage', $energy_usage);
+                                            $set('water_usage', $water_usage);
+                                            $set('rental_value', $rental_value);
+
+                                            $lcca = $get('initial_cost') + $get('npv_maintenance') + $get('energy_usage')
+                                                + $get('water_usage') + $get('rental_value');
+
+                                            $set('lcca', round($lcca, 2));
+                                        }
+                                    })
                                     ->afterStateUpdated(function (callable $get, callable $set, $state) {
 
                                         if (!$state) {
@@ -174,8 +248,8 @@ class ReportResource extends Resource
 
                                         if ($state) {
                                             $calculator = Calculator::find(1);
-                                            $energy_usage = $calculator->daily_electrical_cost * $state;
-                                            $water_usage = $calculator->daily_water_cost * $state;
+                                            $energy_usage = $calculator->yearly_electrical_cost * $state;
+                                            $water_usage = $calculator->yearly_water_cost * $state;
                                             $rental_value = RentalCost::find(1)->cost_room;
 
                                             $set('energy_usage', $energy_usage);

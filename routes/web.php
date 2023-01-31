@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,4 +21,13 @@ Route::middleware('guest')->group(function() {
     Route::name('login')->get('/', [AuthController::class, 'login']);
     Route::get('login', [AuthController::class, 'login']);
     Route::name('login_post')->post('login_post', [AuthController::class, 'login_post']);
+});
+Route::middleware('auth')->group(function() {
+
+    Route::name('report.')->prefix('report')->group(function() {
+
+        Route::name('project')->get('project', [ReportController::class, 'project']);
+
+    });
+
 });

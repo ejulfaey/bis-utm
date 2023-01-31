@@ -69,7 +69,7 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
                     Forms\Components\TextInput::make('total_cost')
                         ->label('Total Cost (RM)')
                         ->disabled(),
-                ])->columns(4),
+                ])->columns(3),
         ];
     }
 

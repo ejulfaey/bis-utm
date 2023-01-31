@@ -34,12 +34,12 @@ class RentalForm extends Component implements Forms\Contracts\HasForms
                     Forms\Components\Grid::make(2)
                         ->schema([
                             Forms\Components\TextInput::make('cost_room')
-                                ->label('Rental cost room (RM/day)')
+                                ->label('Rental cost per unit (RM/day)')
                                 ->afterStateUpdated(fn ($state) => $this->updateField($state))
                                 ->numeric()
                                 ->reactive(),
                             Forms\Components\TextInput::make('no_of_room')
-                                ->label('No. of room')
+                                ->label('No. of unit')
                                 ->afterStateUpdated(fn ($state) => $this->updateField($state))
                                 ->integer()
                                 ->reactive(),
