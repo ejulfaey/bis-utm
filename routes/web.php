@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function() {
     Route::name('report.')->prefix('report')->group(function() {
 
         Route::name('project')->get('project', [ReportController::class, 'project']);
+        Route::name('report')->get('report', [ReportController::class, 'report']);
 
     });
 

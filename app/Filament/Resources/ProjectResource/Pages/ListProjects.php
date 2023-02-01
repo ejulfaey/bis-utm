@@ -14,6 +14,8 @@ class ListProjects extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Actions\Action::make('print')
+                ->url(fn () => route('report.project')),
         ];
     }
 }
