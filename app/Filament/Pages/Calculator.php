@@ -5,13 +5,8 @@ namespace App\Filament\Pages;
 use App\Http\Livewire\MaintenanceForm;
 use App\Http\Livewire\OperatingForm;
 use App\Http\Livewire\RentalForm;
-use App\Models\Calculator as ModelsCalculator;
-use App\Models\ConstructionCost;
-use App\Models\Parameter;
+use App\Models\Role;
 use Filament\Forms;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
 class Calculator extends Page implements Forms\Contracts\HasForms
@@ -29,6 +24,11 @@ class Calculator extends Page implements Forms\Contracts\HasForms
     protected static string $view = 'filament.pages.calculator';
 
     protected static ?int $navigationSort = 3;
+
+    public static function shouldRegisterNavigation() : bool
+    {
+        return in_array(auth()->user()->role_id, [Role::SUPERADMIN, Role::ADMIN]);
+    }
 
     public $activeTab = 'construction';
 

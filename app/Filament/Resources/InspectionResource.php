@@ -26,7 +26,7 @@ class InspectionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-list';
 
-    // protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     protected static bool $shouldRegisterNavigation = false;
 
@@ -80,7 +80,24 @@ class InspectionResource extends Resource
                                 }
                             })
                             ->columnSpanFull()
-                            ->disabled(true),
+                            ->disabled(true)
+                            ->hiddenOn('create'),
+                        Forms\Components\Select::make('project')
+                            ->label('Project')
+                            ->options(Project::pluck('name', 'id'))
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $set, $state) {
+                                $project = Project::find($state);
+                                dd($project);
+                                // if ($project) {
+                                //     dd('test');
+                                //     $set('assessor', $project->user->name);
+                                // }
+                            })
+                            ->searchable()
+                            ->columnSpanFull()
+                            ->hiddenOn('edit')
+                            ->required(),
                         Forms\Components\TextInput::make('assessor')
                             ->label('Project Leader')
                             ->default(function () {

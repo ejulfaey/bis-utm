@@ -25,7 +25,7 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-folder-open';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     public static function getEloquentQuery(): Builder
     {
@@ -47,8 +47,11 @@ class ProjectResource extends Resource
                             ->maxLength(255)
                             ->required(),
                         Forms\Components\TextInput::make('user.name')
-                            ->label('Assessor')
+                            ->label('Project Leader')
                             ->default(auth()->user()->name)
+                            ->afterStateHydrated(function (callable $set) {
+                                $set('user.name', auth()->user()->name);
+                            })
                             ->disabled(true),
                         Grid::make(3)
                             ->schema([
