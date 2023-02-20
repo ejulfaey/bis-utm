@@ -13,16 +13,18 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 use App\Models\Inspection;
 use App\Models\Parameter;
+use App\Models\Project;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\Support\Htmlable;
+use Asantibanez\LivewireCharts\Models\ColumnChartModel;
 
 class InspectionArchitecturalRelationManager extends RelationManager
 {
     protected static string $relationship = 'inspection_architectural';
 
-    protected static ?string $title = 'Architectural Components';
+    protected static ?string $title = 'Architectural';
 
     public static function form(Form $form): Form
     {
@@ -35,11 +37,10 @@ class InspectionArchitecturalRelationManager extends RelationManager
                             ->label('Project')
                             ->relationship('project', 'name')
                             ->afterStateHydrated(function (callable $get, callable $set, $state) {
-                                $project = Project::find($state);
                                 $model = Inspection::find($get('id'));
 
-                                $set('assessor', $project->user->name);
-                                $set('college_block', $project->college_block);
+                                $set('assessor', $model->project->user->name);
+                                $set('college_block', $model->project->college_block);
                                 $set('condition_score', $model->condition_score->value);
                                 $set('maintenance_score', $model->maintenance_score->value);
                                 $set('total_matrix', $model->total_matrix);
@@ -134,13 +135,6 @@ class InspectionArchitecturalRelationManager extends RelationManager
             ])
             ->defaultSort('date', 'desc');
     }
-
-    // public function mountInteractsWithTable(): void
-    // {
-    //     $this->emit('updateChart', [
-    //         'data' => 1,
-    //     ]);
-    // }
 
     protected function getTableHeader(): View|Htmlable|null
     {

@@ -23,6 +23,8 @@ class InspectionsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $title = 'All Inspections';
+
     public static function table(Table $table): Table
     {
         return $table

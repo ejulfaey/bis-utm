@@ -16,57 +16,14 @@
     </div>
     <div class="p-4 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div class="px-4 py-6 border shadow-sm rounded-lg flex flex-col justify-center items-center">
-            <canvas id="chart1"></canvas>
+            <livewire:livewire-chart chartId="chart-1" :label="$chart1['label']" :data="$chart1['data']" />
         </div>
         <div class="px-4 py-6 border shadow-sm rounded-lg flex flex-col justify-center items-center">
-            <canvas id="chart2"></canvas>
+            <livewire:livewire-chart chartId="chart-2" :label="$chart2['label']" :data="$chart2['data']" />
         </div>
         <div class="px-4 py-6 border shadow-sm rounded-lg flex flex-col justify-center items-center">
-            <canvas id="chart3"></canvas>
+            <livewire:livewire-chart chartId="chart-3" :label="$chart3['label']" :data="$chart3['data']" />
         </div>
     </div>
 </div>
 @endif
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctx1 = document.getElementById('chart1');
-    new Chart(ctx1, {
-        type: 'doughnut',
-        data: {
-            labels: @json($chart1['label']),
-            datasets: [{
-                label: '# of Defects',
-                data: @json($chart1['data']),
-                borderWidth: 3
-            }]
-        },
-    });
-
-    const ctx2 = document.getElementById('chart2');
-    new Chart(ctx2, {
-        type: 'doughnut',
-        data: {
-            labels: @json($chart2['label']),
-            datasets: [{
-                label: '# of Defects',
-                data: @json($chart2['data']),
-                borderWidth: 3
-            }]
-        },
-    });
-
-    const ctx3 = document.getElementById('chart3');
-    new Chart(ctx3, {
-        type: 'doughnut',
-        data: {
-            labels: @json($chart3['label']),
-            datasets: [{
-                label: '# of Defects',
-                data: @json($chart3['data']),
-                borderWidth: 3
-            }]
-        },
-    });
-</script>
-@endpush

@@ -24,7 +24,7 @@ class InspectionStructuralRelationManager extends RelationManager
 {
     protected static string $relationship = 'inspection_structural';
 
-    protected static ?string $title = 'Structural Components';
+    protected static ?string $title = 'Structural';
 
     public static function form(Form $form): Form
     {
