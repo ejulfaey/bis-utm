@@ -12,7 +12,7 @@ class MaintenanceCost extends Model
     protected $fillable = [
         'type',
         'no',
-        'building_section',
+        'location_id',
         'subcomponent_id',
         'area',
         'cost',
@@ -24,5 +24,11 @@ class MaintenanceCost extends Model
     {
         return $this->belongsTo(Parameter::class, 'subcomponent_id');
     }
+
+    public function location()
+    {
+        return $this->belongsTo(Parameter::class, 'location_id');
+    }
+
 
 }

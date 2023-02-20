@@ -18,6 +18,7 @@ class Project extends Model
         'building_type_id',
         'college_block',
         'total_floor',
+        'area_of_building'
     ];
 
     public function getActivitylogOptions(): LogOptions

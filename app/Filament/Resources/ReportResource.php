@@ -80,7 +80,8 @@ class ReportResource extends Resource
                                             ->whereComponentId($component->id)
                                             ->get();
 
-                                        $score = ($inspects->sum('total_matrix') / $inspects->count());
+                                        $total = $inspects->count() == 0 ? 1 : $inspects->count();
+                                        $score = ($inspects->sum('total_matrix') / $total);
                                         $percent = round($score / 16 * $component->value, 2);
                                         $bca_score += $percent;
 
@@ -124,7 +125,8 @@ class ReportResource extends Resource
                                             ->whereComponentId($component->id)
                                             ->get();
 
-                                        $score = ($inspects->sum('total_matrix') / $inspects->count());
+                                        $total = $inspects->count() == 0 ? 1 : $inspects->count();
+                                        $score = ($inspects->sum('total_matrix') / $total);
                                         $percent = round($score / 16 * $component->value, 2);
                                         $bca_score += $percent;
 
@@ -180,7 +182,7 @@ class ReportResource extends Resource
                                     ->reactive()
                                     ->disabled(),
                                 Forms\Components\TextInput::make('classification')
-                                    ->label('Classification')
+                                    ->label('Building Classification')
                                     ->disabled(),
                             ]),
                     ]),

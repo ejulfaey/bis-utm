@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('type')->nullable();
             $table->decimal('no');
-            $table->string('building_section');
+            $table->integer('location_id');
             $table->integer('subcomponent_id');
             $table->decimal('area');
             $table->decimal('cost');

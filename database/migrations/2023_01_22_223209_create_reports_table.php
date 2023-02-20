@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id');
-            $table->decimal('area_of_building');
             $table->decimal('structural_score')->default(0);
             $table->decimal('structural_percent')->default(0);
             $table->decimal('architectural_score')->default(0);

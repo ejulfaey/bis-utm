@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('building_type_id');
             $table->string('college_block');
             $table->integer('total_floor');
+            $table->decimal('area_of_building');
             $table->softDeletes();
             $table->timestamps();
         });
