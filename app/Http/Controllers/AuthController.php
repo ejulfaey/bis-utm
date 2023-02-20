@@ -28,7 +28,7 @@ class AuthController extends Controller
             ->withProperties($request->only(['email', 'remember']))
             ->log($log);
 
-        return $auth ? redirect()->to('/admin/dashboard') : back()->withErrors('email', 'Failed to login!');
+        return $auth ? redirect()->to('/home') : back()->withErrors('email', 'Failed to login!');
     }
 
     public function logout()

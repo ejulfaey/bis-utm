@@ -53,7 +53,7 @@ class ProjectResource extends Resource
                                 $set('user.name', auth()->user()->name);
                             })
                             ->disabled(true),
-                        Grid::make(3)
+                        Grid::make(2)
                             ->schema([
                                 Forms\Components\Select::make('building_type_id')
                                     ->label('Building Type')
@@ -64,6 +64,10 @@ class ProjectResource extends Resource
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('total_floor')
+                                    ->numeric()
+                                    ->required(),
+                                Forms\Components\TextInput::make('area_of_building')
+                                    ->label('Area of Building (m2)')
                                     ->numeric()
                                     ->required(),
                             ]),

@@ -88,11 +88,6 @@ class InspectionResource extends Resource
                             ->reactive()
                             ->afterStateUpdated(function (callable $set, $state) {
                                 $project = Project::find($state);
-                                dd($project);
-                                // if ($project) {
-                                //     dd('test');
-                                //     $set('assessor', $project->user->name);
-                                // }
                             })
                             ->searchable()
                             ->columnSpanFull()
@@ -129,6 +124,14 @@ class InspectionResource extends Resource
                                 if ($livewire instanceof Pages\EditInspection)
                                     $set('total_floor', $record?->project->total_floor);
                             })
+                            ->disabled(true),
+                        Forms\Components\FileUpload::make('plan_attachment')
+                            ->label('Drawing Plan')
+                            ->default(function (?Model $record) {
+                                $project = Project::find(request()->query('ownerRecord'));
+                                return $project?->plan_attachment;
+                            })
+                            ->columnSpanFull()
                             ->disabled(true),
 
                     ])
@@ -177,28 +180,31 @@ class InspectionResource extends Resource
                                     ->searchable()
                                     ->required(),
                             ]),
-                        Forms\Components\Select::make('component_id')
-                            ->label('Component')
-                            ->options(Parameter::active()->whereGroupId(Parameter::COMPONENT)->pluck('name', 'id'))
-                            ->reactive()
-                            ->required(),
-                        Forms\Components\Select::make('sub_component_id')
-                            ->label('Sub Component')
-                            ->options(function (callable $get) {
-
-                                if ($get('component_id')) {
-                                    return Parameter::whereParentId($get('component_id'))->pluck('name', 'id');
-                                }
-                            })
-                            ->searchable()
-                            ->required(),
                         Grid::make(3)
                             ->schema([
+                                Forms\Components\Select::make('component_id')
+                                    ->label('Component')
+                                    ->options(Parameter::active()->whereGroupId(Parameter::COMPONENT)->pluck('name', 'id'))
+                                    ->reactive()
+                                    ->required(),
+                                Forms\Components\Select::make('sub_component_id')
+                                    ->label('Sub Component')
+                                    ->options(function (callable $get) {
+
+                                        if ($get('component_id')) {
+                                            return Parameter::whereParentId($get('component_id'))->pluck('name', 'id');
+                                        }
+                                    })
+                                    ->searchable()
+                                    ->required(),
                                 Forms\Components\Select::make('defect_id')
                                     ->label('Building Defect')
                                     ->options(Parameter::active()->whereGroupId(Parameter::DEFECT)->pluck('name', 'id'))
                                     ->searchable()
                                     ->required(),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
                                 Forms\Components\Select::make('condition_score_id')
                                     ->label('Condition Score')
                                     ->options(Parameter::active()->whereGroupId(Parameter::SCORE_CONDITION)->pluck('value', 'id'))
