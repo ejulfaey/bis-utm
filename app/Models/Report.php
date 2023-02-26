@@ -11,7 +11,6 @@ class Report extends Model
 
     protected $fillable = [
         'project_id',
-        'area_of_building',
         'structural_score',
         'structural_percent',
         'architectural_score',

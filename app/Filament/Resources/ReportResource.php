@@ -111,8 +111,8 @@ class ReportResource extends Resource
 
                                     $codes = [
                                         'architectural',
-                                        'building',
                                         'structural',
+                                        'building',
                                     ];
 
                                     $components = Parameter::select('id', 'name', 'value')
@@ -247,6 +247,7 @@ class ReportResource extends Resource
 
                                         if ($state && $get('discount_rate')) {
                                             $npv = $get('maintenance_cost') * pow((1 + $get('discount_rate')), (-$state));
+                                            $npv = round($npv, 3);
                                             $set('npv_maintenance', $npv);
                                         }
 
@@ -275,6 +276,7 @@ class ReportResource extends Resource
 
                                         if ($state && $get('time_period')) {
                                             $npv = $get('maintenance_cost') * pow((1 + $state), (-$get('time_period')));
+                                            $npv = round($npv, 3);
                                             $set('npv_maintenance', $npv);
                                         }
                                     })
@@ -322,7 +324,6 @@ class ReportResource extends Resource
                     ->label('Classification'),
                 Tables\Columns\TextColumn::make('lcca')
                     ->label('Life Cycle Cost Analysis, LCCA'),
-                Tables\Columns\TextColumn::make('summary'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Last Update')
                     ->dateTime(),
@@ -332,6 +333,13 @@ class ReportResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('print')
+                ->label('Print')
+                ->icon('heroicon-o-printer')
+                ->url(function(Report $record) {
+                    return route('report.summary', $record);
+                })
+                ->openUrlInNewTab(true),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

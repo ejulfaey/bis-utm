@@ -10,7 +10,6 @@
     "require": {
         "php": "^8.0.2",
         "alperenersoy/filament-export": "^0.2.4",
-        "barryvdh/laravel-dompdf": "^2.0",
         "filament/filament": "^2.0",
         "filament/forms": "^2.0",
         "guzzlehttp/guzzle": "^7.2",

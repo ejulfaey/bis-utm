@@ -19,7 +19,7 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
 
     public $type;
     public $no;
-    public $building_section;
+    public $location_id;
     public $subcomponent_id;
     public $area;
     public $cost;
@@ -41,7 +41,10 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
                         ->label('No.')
                         ->numeric()
                         ->required(),
-                    Forms\Components\TextInput::make('building_section')
+                    Forms\Components\Select::make('location_id')
+                        ->label('Location')
+                        ->searchable()
+                        ->options(Parameter::whereGroupId(Parameter::LOCATION)->pluck('name', 'id'))
                         ->required(),
                     Forms\Components\Select::make('subcomponent_id')
                         ->label('Building Component')
@@ -89,7 +92,7 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
             MaintenanceCost::create($this->form->getState());
 
         Notification::make()
-            ->title( $this->isEdit ? 'Updated successfully' : 'Created successfully')
+            ->title($this->isEdit ? 'Updated successfully' : 'Created successfully')
             ->icon('heroicon-o-check-circle')
             ->iconColor('success')
             ->send();
@@ -101,8 +104,8 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('no')
                 ->label('No.')
                 ->searchable(),
-            Tables\Columns\TextColumn::make('building_section')
-                ->label('Building Section')
+            Tables\Columns\TextColumn::make('location.name')
+                ->label('Location')
                 ->searchable(),
             Tables\Columns\TextColumn::make('component.name')
                 ->label('Building Component'),
@@ -123,7 +126,7 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
         $this->isEdit = $record->id;
         $this->form->fill([
             'no' => $record->no,
-            'building_section' => $record->building_section,
+            'location_id' => $record->location_id,
             'subcomponent_id' => $record->subcomponent_id,
             'area' => $record->area,
             'cost' => $record->cost,
@@ -137,7 +140,7 @@ class MaintenanceForm extends Component implements Tables\Contracts\HasTable
         $this->isEdit = null;
         $this->form->fill([
             'no' => '',
-            'building_section' => '',
+            'location_id' => '',
             'subcomponent_id' => '',
             'area' => '',
             'cost' => '',
