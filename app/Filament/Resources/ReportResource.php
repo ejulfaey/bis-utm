@@ -51,11 +51,12 @@ class ReportResource extends Resource
                             ->options(Project::orderBy('name')->pluck('name', 'id'))
                             ->searchable()
                             ->reactive()
-                            ->afterStateHydrated(function (callable $get, callable $set, $state) {
+                            ->afterStateHydrated(function (callable $set, $state) {
                                 $project = Project::find($state);
 
                                 if ($project) {
 
+                                    $set('area_of_building', $project->area_of_building);
                                     $set('building_type', $project->building_type->name);
                                     $set('total_floor', $project->total_floor);
 
@@ -101,6 +102,7 @@ class ReportResource extends Resource
 
                                 if ($project) {
 
+                                    $set('area_of_building', $project->area_of_building);
                                     $set('building_type', $project->building_type->name);
                                     $set('total_floor', $project->total_floor);
 
@@ -109,8 +111,8 @@ class ReportResource extends Resource
 
                                     $codes = [
                                         'architectural',
-                                        'structural',
                                         'building',
+                                        'structural',
                                     ];
 
                                     $components = Parameter::select('id', 'name', 'value')

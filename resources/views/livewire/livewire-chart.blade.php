@@ -1,4 +1,4 @@
-<canvas id="{{ $chartId }}"></canvas>
+<canvas wire:poll.500ms id="{{ $chartId }}"></canvas>
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
