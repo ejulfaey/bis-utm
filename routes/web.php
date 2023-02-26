@@ -26,6 +26,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
 
     Route::get('logout', [AuthController::class, 'logout']);
+    Route::name('filament.auth.logout')->post('filament/logout', [AuthController::class, 'logout']);
     Route::name('report.')->prefix('report')->group(function () {
 
         Route::name('project')->get('project', [ReportController::class, 'project']);
