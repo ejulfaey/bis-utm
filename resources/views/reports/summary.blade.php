@@ -51,6 +51,10 @@
                         <td class="font-semibold border border-gray-400 px-4 py-1.5">{{ $project->area_of_building }}</td>
                     </tr>
                     <tr>
+                        <td width="20%" class="border border-gray-400 px-4 py-1.5">Total Inspection</td>
+                        <td class="font-semibold border border-gray-400 px-4 py-1.5">{{ $project->inspections->count() }}</td>
+                    </tr>
+                    <tr>
                         <td width="20%" class="border border-gray-400 px-4 py-1.5">Created At</td>
                         <td class="font-semibold border border-gray-400 px-4 py-1.5">{{ $project->created_at }}</td>
                     </tr>
@@ -88,7 +92,6 @@
                 </tbody>
             </table>
         </div>
-        <hr>
         <div>
             <h2 class="text-lg text-gray-800 font-semibold">Life Cycle Cost Analysis</h2>
             <table class="mt-4 w-full text-sm text-gray-600">

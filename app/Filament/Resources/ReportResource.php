@@ -338,8 +338,7 @@ class ReportResource extends Resource
                 ->icon('heroicon-o-printer')
                 ->url(function(Report $record) {
                     return route('report.summary', $record);
-                })
-                ->openUrlInNewTab(true),
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
