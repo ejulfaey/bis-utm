@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 // Authentication
 
 Route::middleware('guest')->group(function () {
+    Route::name('filament.auth.login')->post('filament/login', [AuthController::class, 'login']);
     Route::name('login')->get('/', [AuthController::class, 'login']);
     Route::get('login', [AuthController::class, 'login']);
     Route::name('login_post')->post('login_post', [AuthController::class, 'login_post']);
