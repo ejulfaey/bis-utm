@@ -37,7 +37,7 @@ return [
     |
     */
 
-    'core_path' => env('FILAMENT_CORE_PATH', 'filament'),
+    'core_path' => env('FILAMENT_CORE_PATH', ''),
 
     /*
     |--------------------------------------------------------------------------
