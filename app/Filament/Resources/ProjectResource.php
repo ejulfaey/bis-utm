@@ -123,7 +123,6 @@ class ProjectResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                FilamentExportBulkAction::make('export'),
             ]);
     }
 
