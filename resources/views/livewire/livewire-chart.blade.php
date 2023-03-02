@@ -1,21 +1,18 @@
-<canvas wire:poll.500ms id="{{ $chartId }}"></canvas>
+<div id="{{ $chartId }}"></div>
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    new Chart(document.getElementById('{{ $chartId }}'), {
-        type: 'doughnut',
-        data: {
-            labels: @json($label),
-            datasets: [{
-                label: '# of Defects',
-                data: @json($data),
-                borderWidth: 3
-            }]
+    console.log(@json($data), @json($label));
+    var options = {
+        chart: {
+            type: 'donut'
         },
-    });
+        labels: @json($label),
+        series: @json($data),
+    };
 
-    Livewire.on('init', data => {
-        console.log(data);
-    });
+    var chart = new ApexCharts(document.querySelector("#{{ $chartId }}"), options);
+
+    chart.render();
 </script>
 @endpush

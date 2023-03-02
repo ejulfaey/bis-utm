@@ -50,7 +50,6 @@ class ReportResource extends Resource
                             ->label('Project')
                             ->options(Project::orderBy('name')->pluck('name', 'id'))
                             ->searchable()
-                            ->reactive()
                             ->afterStateHydrated(function (callable $set, $state) {
                                 $project = Project::find($state);
 
@@ -141,8 +140,27 @@ class ReportResource extends Resource
                                         ->first();
 
                                     $set('classification', $classification->name);
+                                } else {
+                                    $codes = [
+                                        'architectural',
+                                        'structural',
+                                        'building',
+                                    ];
+
+                                    foreach ($codes as  $code) {
+                                        $set($code . '_score', null);
+                                        $set($code . '_percent', null);
+                                    }
+
+                                    $set('area_of_building', null);
+                                    $set('building_type', null);
+                                    $set('total_floor', null);
+
+                                    $set('bca_score', null);
+                                    $set('classification', null);
                                 }
                             })
+                            ->reactive()
                             ->required(),
                         Forms\Components\Grid::make(3)
                             ->schema([
@@ -215,7 +233,7 @@ class ReportResource extends Resource
                                         }
 
                                         if ($state && $get('discount_rate')) {
-                                            $npv = $get('maintenance_cost') * pow((1 + $get('discount_rate')), (-$state));
+                                            $npv = $get('maintenance_cost') / pow((1 + $get('discount_rate') / 100), $state);
                                             $set('npv_maintenance', $npv);
                                         }
 
@@ -246,7 +264,7 @@ class ReportResource extends Resource
                                         }
 
                                         if ($state && $get('discount_rate')) {
-                                            $npv = $get('maintenance_cost') * pow((1 + $get('discount_rate')), (-$state));
+                                            $npv = $get('maintenance_cost') / pow((1 + $get('discount_rate') / 100), $state);
                                             $npv = round($npv, 3);
                                             $set('npv_maintenance', $npv);
                                         }
@@ -271,19 +289,22 @@ class ReportResource extends Resource
                                 Forms\Components\TextInput::make('discount_rate')
                                     ->label('Discount rate (%)')
                                     ->numeric()
-                                    ->reactive()
                                     ->afterStateUpdated(function (callable $get, callable $set, $state) {
 
                                         if ($state && $get('time_period')) {
-                                            $npv = $get('maintenance_cost') * pow((1 + $state), (-$get('time_period')));
+                                            $npv = $get('maintenance_cost') / pow((1 + $state / 100), $get('time_period'));
                                             $npv = round($npv, 3);
                                             $set('npv_maintenance', $npv);
                                         }
                                     })
+                                    ->reactive()
                                     ->required(),
                             ]),
                         Forms\Components\TextInput::make('npv_maintenance')
                             ->label('NPV of maintenance cost (RM)')
+                            ->afterStateHydrated(function (callable $set, ?Model $record) {
+                                if ($record) $set('npv_maintenance', $record->npv_maintenance);
+                            })
                             ->disabled(),
                         Forms\Components\Grid::make(2)
                             ->schema([
@@ -334,11 +355,11 @@ class ReportResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('print')
-                ->label('Print')
-                ->icon('heroicon-o-printer')
-                ->url(function(Report $record) {
-                    return route('report.summary', $record);
-                }),
+                    ->label('Print')
+                    ->icon('heroicon-o-printer')
+                    ->url(function (Report $record) {
+                        return route('report.summary', $record);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

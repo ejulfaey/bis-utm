@@ -58,7 +58,7 @@ class RentalForm extends Component implements Forms\Contracts\HasForms
     public function updateField($state)
     {
         if ($this->cost_room && $this->no_of_room)
-            $this->total_rental = $this->cost_room * $this->no_of_room;
+            $this->total_rental = $this->cost_room * $this->no_of_room * 365;
     }
 
     public function submit()

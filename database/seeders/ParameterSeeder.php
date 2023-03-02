@@ -29,9 +29,9 @@ class ParameterSeeder extends Seeder
             ['group_id' => 2, 'name' => 'Corridor', 'created_at' => now(), 'updated_at' => now()],
 
             // component
-            ['group_id' => 3, 'name' => 'Structural', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 3, 'name' => 'Architectural', 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 3, 'name' => 'Building Service', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 3, 'name' => 'Structural', 'value' => '22.22',  'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 3, 'name' => 'Architectural', 'value' => '66.67',  'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 3, 'name' => 'Building Service', 'value' => '11.11',  'created_at' => now(), 'updated_at' => now()],
 
             // defects
             ['group_id' => 5, 'name' => 'Corrosion', 'created_at' => now(), 'updated_at' => now()],
@@ -95,15 +95,15 @@ class ParameterSeeder extends Seeder
 
         DB::table('parameters')->insert([
             // Condition Score
-            ['group_id' => 8, 'name' => 'Bad', 'value' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 8, 'name' => 'Poor', 'value' => 2, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 8, 'name' => 'Very Severe', 'value' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 8, 'name' => 'Severe', 'value' => 2, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 8, 'name' => 'Moderate', 'value' => 3, 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 8, 'name' => 'Good', 'value' => 4, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 8, 'name' => 'Negligible', 'value' => 4, 'created_at' => now(), 'updated_at' => now()],
             // Maintenance Score
-            ['group_id' => 9, 'name' => 'Bad', 'value' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 9, 'name' => 'Poor', 'value' => 2, 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 9, 'name' => 'Moderate', 'value' => 3, 'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 9, 'name' => 'Good', 'value' => 4, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 9, 'name' => 'Replacement/Emergency', 'value' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 9, 'name' => 'Repart/Urgent', 'value' => 2, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 9, 'name' => 'Routine', 'value' => 3, 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 9, 'name' => 'Normal', 'value' => 4, 'created_at' => now(), 'updated_at' => now()],
         ]);
         DB::table('parameters')->insert([
             // Classification

@@ -107,16 +107,17 @@ class ConstructionForm extends Component implements Forms\Contracts\HasForms
 
     public function updateTotalCost()
     {
-        $this->total_cost = number_format(array_sum([
+        $total = array_sum([
             $this->construction_cost,
             $this->mechanical_cost,
             $this->electrical_cost,
             $this->hydraulic_cost,
             $this->fire_service_cost,
             $this->lift_cost
-        ]), 2);
+        ]);
+        $this->total_cost = number_format($total, 2);
         if ($this->area_of_building > 0)
-            $this->initial_cost = number_format($this->total_cost * $this->area_of_building, 2);
+            $this->initial_cost = number_format($total * $this->area_of_building, 2);
     }
 
     public function saveConstruction(): void
