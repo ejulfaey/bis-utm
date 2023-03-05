@@ -25,15 +25,15 @@ return new class extends Migration
             $table->decimal('bca_score')->default(0);
             $table->foreignId('classification_id');
             // 
-            $table->decimal('initial_cost')->default(0);
-            $table->decimal('maintenance_cost')->default(0);
-            $table->decimal('time_period')->default(0);
-            $table->decimal('discount_rate')->default(0);
-            $table->decimal('npv_maintenance')->default(0);
-            $table->decimal('energy_usage')->default(0);
-            $table->decimal('water_usage')->default(0);
-            $table->decimal('rental_cost')->default(0);
-            $table->decimal('lcca')->default(0);
+            $table->decimal('initial_cost', 14, 2)->default(0);
+            $table->decimal('maintenance_cost', 14, 2)->default(0);
+            $table->decimal('time_period', 14, 2)->default(0);
+            $table->decimal('discount_rate', 14, 2)->default(0);
+            $table->decimal('npv_maintenance', 14, 2)->default(0);
+            $table->decimal('energy_usage', 14, 2)->default(0);
+            $table->decimal('water_usage', 14, 2)->default(0);
+            $table->decimal('rental_cost', 14, 2)->default(0);
+            $table->decimal('lcca', 14, 2)->default(0);
             $table->text('summary')->nullable();
             $table->timestamps();
         });

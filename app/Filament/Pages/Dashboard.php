@@ -13,4 +13,15 @@ class Dashboard extends Page
     protected static string $view = 'filament.pages.dashboard';
 
     protected static ?string $slug = 'home';
+
+    protected function getViewData(): array
+    {
+        return [
+            'chart_1' => [
+                ''
+
+            ],
+
+        ];
+    }
 }

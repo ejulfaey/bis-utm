@@ -17,13 +17,13 @@ class Module2Seeder extends Seeder
     {
         DB::table('construction_costs')->insert([
             [
-                'building_type_id' => 26,
+                'building_type_id' => 23,
             ],
             [
-                'building_type_id' => 27,
+                'building_type_id' => 24,
             ],
             [
-                'building_type_id' => 28,
+                'building_type_id' => 25,
             ],
         ]);
 

@@ -94,15 +94,17 @@ class ConstructionForm extends Component implements Forms\Contracts\HasForms
     public function updateField($type)
     {
         $construction = ConstructionCost::firstWhere('building_type_id', $type);
-        $this->area_of_building = $construction->area_of_building;
-        $this->construction_cost = $construction->construction_cost;
-        $this->mechanical_cost = $construction->mechanical_cost;
-        $this->electrical_cost = $construction->electrical_cost;
-        $this->hydraulic_cost = $construction->hydraulic_cost;
-        $this->fire_service_cost = $construction->fire_service_cost;
-        $this->lift_cost = $construction->lift_cost;
-        $this->total_cost = $construction->total_cost;
-        $this->initial_cost = number_format($this->total_cost * $this->area_of_building, 2);
+        if ($construction) {
+            $this->area_of_building = $construction->area_of_building;
+            $this->construction_cost = $construction->construction_cost;
+            $this->mechanical_cost = $construction->mechanical_cost;
+            $this->electrical_cost = $construction->electrical_cost;
+            $this->hydraulic_cost = $construction->hydraulic_cost;
+            $this->fire_service_cost = $construction->fire_service_cost;
+            $this->lift_cost = $construction->lift_cost;
+            $this->total_cost = $construction->total_cost;
+            $this->initial_cost = number_format($this->total_cost * $this->area_of_building, 2);
+        }
     }
 
     public function updateTotalCost()

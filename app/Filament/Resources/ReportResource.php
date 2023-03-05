@@ -239,8 +239,8 @@ class ReportResource extends Resource
 
                                         if ($state) {
                                             $calculator = Calculator::find(1);
-                                            $energy_usage = $calculator->yearly_electrical_cost * $state;
-                                            $water_usage = $calculator->yearly_water_cost * $state;
+                                            $energy_usage = round($calculator->yearly_electrical_cost * $state, 2);
+                                            $water_usage = round($calculator->yearly_water_cost * $state, 2);
                                             $rental_value = RentalCost::find(1)->cost_room;
 
                                             $set('energy_usage', $energy_usage);
@@ -271,8 +271,8 @@ class ReportResource extends Resource
 
                                         if ($state) {
                                             $calculator = Calculator::find(1);
-                                            $energy_usage = $calculator->yearly_electrical_cost * $state;
-                                            $water_usage = $calculator->yearly_water_cost * $state;
+                                            $energy_usage = round($calculator->yearly_electrical_cost * $state, 2);
+                                            $water_usage = round($calculator->yearly_water_cost * $state, 2);
                                             $rental_value = RentalCost::find(1)->cost_room;
 
                                             $set('energy_usage', $energy_usage);
