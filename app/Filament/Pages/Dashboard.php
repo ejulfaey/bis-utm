@@ -2,9 +2,9 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\OverviewCard;
+use App\Http\Livewire\Dashboard\SelectProject;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Pages\Page;
-use Filament\Widgets\StatsOverviewWidget\Card;
 
 class Dashboard extends Page
 {
@@ -13,11 +13,4 @@ class Dashboard extends Page
     protected static string $view = 'filament.pages.dashboard';
 
     protected static ?string $slug = 'home';
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            // OverviewCard::class,
-        ];
-    }
 }

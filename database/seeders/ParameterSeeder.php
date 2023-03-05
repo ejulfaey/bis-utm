@@ -28,11 +28,6 @@ class ParameterSeeder extends Seeder
             ['group_id' => 2, 'name' => 'External Area', 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 2, 'name' => 'Corridor', 'created_at' => now(), 'updated_at' => now()],
 
-            // component
-            ['group_id' => 3, 'name' => 'Structural', 'value' => '22.22',  'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 3, 'name' => 'Architectural', 'value' => '66.67',  'created_at' => now(), 'updated_at' => now()],
-            ['group_id' => 3, 'name' => 'Building Service', 'value' => '11.11',  'created_at' => now(), 'updated_at' => now()],
-
             // defects
             ['group_id' => 5, 'name' => 'Corrosion', 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 5, 'name' => 'Cracking', 'created_at' => now(), 'updated_at' => now()],
@@ -58,11 +53,9 @@ class ParameterSeeder extends Seeder
             ['group_id' => 11, 'name' => 'Double Room', 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 11, 'name' => 'Twin Room', 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 11, 'name' => 'Master Room', 'created_at' => now(), 'updated_at' => now()],
-
         ]);
 
         DB::table('parameters')->insert([
-
             // sub-component
             ['group_id' => 4, 'name' => 'Beam', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 4, 'name' => 'Column', 'parent_id' => 9, 'created_at' => now(), 'updated_at' => now()],
@@ -94,6 +87,10 @@ class ParameterSeeder extends Seeder
         ]);
 
         DB::table('parameters')->insert([
+            // component
+            ['group_id' => 3, 'name' => 'Structural', 'value' => '22.22', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 3, 'name' => 'Architectural', 'value' => '66.67', 'created_at' => now(), 'updated_at' => now()],
+            ['group_id' => 3, 'name' => 'Building Service', 'value' => '11.11', 'created_at' => now(), 'updated_at' => now()],
             // Condition Score
             ['group_id' => 8, 'name' => 'Very Severe', 'value' => 1, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 8, 'name' => 'Severe', 'value' => 2, 'created_at' => now(), 'updated_at' => now()],
@@ -105,6 +102,7 @@ class ParameterSeeder extends Seeder
             ['group_id' => 9, 'name' => 'Routine', 'value' => 3, 'created_at' => now(), 'updated_at' => now()],
             ['group_id' => 9, 'name' => 'Normal', 'value' => 4, 'created_at' => now(), 'updated_at' => now()],
         ]);
+
         DB::table('parameters')->insert([
             // Classification
             ['group_id' => 6, 'name' => 'Class 1 - Very Severe', 'from' => 1, 'to' => 4, 'created_at' => now(), 'updated_at' => now()],
