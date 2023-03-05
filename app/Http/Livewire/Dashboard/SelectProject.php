@@ -9,14 +9,9 @@ class SelectProject extends Component
 {
     public $project;
 
-    public function mount()
+    public function updatedProject($val)
     {
-        $this->project = null;
-    }
-
-    public function updatedProject()
-    {
-        dd('project');
+        $this->emit('updateProject', $val);
     }
 
     public function render()

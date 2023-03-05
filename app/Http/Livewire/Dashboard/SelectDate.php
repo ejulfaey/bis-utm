@@ -10,12 +10,12 @@ class SelectDate extends Component
 
     public function mount()
     {
-        $this->date = today();
+        $this->date = today()->format('Y-m-d');
     }
 
     public function updatedDate($val)
     {
-        dd($val);
+        $this->emit('updatedDate', $val);
     }
 
 

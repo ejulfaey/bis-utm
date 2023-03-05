@@ -12,6 +12,19 @@ class BarChart extends Component
     public $label;
     public $dataset;
 
+    public $project;
+    public $date;
+
+    protected $listeners = [
+        'updateProject',
+        'updatedDate'
+    ];
+
+    public function updateProject()
+    {
+        dd('in chart');
+    }
+
     public function render()
     {
         return view('livewire.dashboard.bar-chart');

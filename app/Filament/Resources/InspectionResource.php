@@ -190,6 +190,7 @@ class InspectionResource extends Resource
                                 Forms\Components\Select::make('sub_component_id')
                                     ->label('Sub Component')
                                     ->options(function (callable $get) {
+                                        dd($get('component_id'));
 
                                         if ($get('component_id')) {
                                             return Parameter::whereParentId($get('component_id'))->pluck('name', 'id');
