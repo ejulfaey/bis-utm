@@ -20,7 +20,7 @@ class ReportController extends Controller
     public function report(Request $request)
     {
         $reports = Report::all();
-        return (new FastExcel($reports))->download('REPORTS-' . now()->format('ymdHIs') . '.xlsx', function($report) {
+        return (new FastExcel($reports))->download('REPORTS-' . now()->format('ymdHIs') . '.xlsx', function ($report) {
 
             return [
                 'Date' => $report->created_at->format('M d, Y'),
@@ -43,12 +43,12 @@ class ReportController extends Controller
                 'Life Cycle Cost Analysis' => $report->lcca,
                 'Summary' => $report->summary,
             ];
-
         });
     }
 
     public function summary(Report $report)
     {
+        /*
         $html = view('reports.summary', [
             'title' => 'Summary - Report',
             'project' => $report->project,
@@ -60,5 +60,11 @@ class ReportController extends Controller
             ->format('A4')
             ->save($filename);
         return response()->download($filename);
+        */
+        return view('reports.summary', [
+            'title' => 'Summary - Report',
+            'project' => $report->project,
+            'report' => $report,
+        ]);
     }
 }
