@@ -23,7 +23,7 @@ class SelectProject extends Component
     {
         return view('livewire.dashboard.select-project', [
             'projects' => Project::latest()
-                ->pluck('id', 'name'),
+                ->get(),
         ]);
     }
 }
