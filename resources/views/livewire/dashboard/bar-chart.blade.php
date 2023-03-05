@@ -17,28 +17,28 @@
                 horizontal: true
             }
         };
+        options['chart']['stacked'] = true;
     }
-    options['chart']['stacked'] = true;
     options['labels'] = @json($label);
-    options['series'] = [{
-        name: 'Marine Sprite',
-        data: [44, 55, 41]
-    }, {
-        name: 'Striking Calf',
-        data: [53, 32, 33]
-    }, {
-        name: 'Tank Picture',
-        data: [12, 17, 11]
-    }, {
-        name: 'Bucket Slope',
-        data: [9, 7, 5]
-    }, {
-        name: 'Reborn Kid',
-        data: [25, 12, 19]
-    }];
     // options['series'] = [{
-    //     data: @json($dataset)
+    //     name: 'Marine Sprite',
+    //     data: [44, 55, 41]
+    // }, {
+    //     name: 'Striking Calf',
+    //     data: [53, 32, 33]
+    // }, {
+    //     name: 'Tank Picture',
+    //     data: [12, 17, 11]
+    // }, {
+    //     name: 'Bucket Slope',
+    //     data: [9, 7, 5]
+    // }, {
+    //     name: 'Reborn Kid',
+    //     data: [25, 12, 19]
     // }];
+    options['series'] = [{
+        data: @json($dataset)
+    }];
     var chart = new ApexCharts(document.querySelector("#{{ $chartId }}"), options);
     chart.render();
 </script>
