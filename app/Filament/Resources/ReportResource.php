@@ -247,8 +247,8 @@ class ReportResource extends Resource
                                             $set('water_usage', $water_usage);
                                             $set('rental_value', $rental_value);
 
-                                            $lcca = $get('initial_cost') + $get('npv_maintenance') + $get('energy_usage')
-                                                + $get('water_usage') + $get('rental_value');
+                                            $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
+                                                + $water_usage + $rental_value;
 
                                             $set('lcca', round($lcca, 2));
                                         }
@@ -278,9 +278,9 @@ class ReportResource extends Resource
                                             $set('energy_usage', $energy_usage);
                                             $set('water_usage', $water_usage);
                                             $set('rental_value', $rental_value);
-
-                                            $lcca = $get('initial_cost') + $get('npv_maintenance') + $get('energy_usage')
-                                                + $get('water_usage') + $get('rental_value');
+                                            
+                                            $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
+                                                + $water_usage + $rental_value;
 
                                             $set('lcca', round($lcca, 2));
                                         }
