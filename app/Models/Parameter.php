@@ -25,9 +25,9 @@ class Parameter extends Model
     public const CLASSIFICATION_BUILDING = 10;
     public const ROOM_TYPE = 11;
 
-    public const COMP_STRUCTURAL = 9;
-    public const COMP_ARCHITECTURAL = 10;
-    public const COMP_BUILDING_SERVICE = 11;
+    public const COMP_STRUCTURAL = 54;
+    public const COMP_ARCHITECTURAL = 55;
+    public const COMP_BUILDING_SERVICE = 56;
 
     protected $fillable = [
         'name',

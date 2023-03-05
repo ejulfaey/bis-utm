@@ -26,7 +26,7 @@ class PhotosRelationManager extends RelationManager
                 Forms\Components\FileUpload::make('photo')
                     ->image()
                     ->directory('photos')
-                    ->maxSize(5120)
+                    ->maxSize(10240)
                     ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
                         return (string) str(date('dmyhis') . '.' . $file->extension())->prepend('photo-');
                     })

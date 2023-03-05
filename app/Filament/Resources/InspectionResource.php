@@ -127,9 +127,13 @@ class InspectionResource extends Resource
                             ->disabled(true),
                         Forms\Components\FileUpload::make('plan_attachment')
                             ->label('Drawing Plan')
-                            ->default(function (?Model $record) {
-                                $project = Project::find(request()->query('ownerRecord'));
-                                return $project?->plan_attachment;
+                            ->afterStateHydrated(function (?Model $record, callable $set) {
+                                if ($record) {
+                                    $set('plan_attachment', [$record?->project->plan_attachment]);
+                                } else {
+                                    $project = Project::find(request()->query('ownerRecord'));
+                                    if ($project) $set('plan_attachment', [$project->plan_attachment]);
+                                }
                             })
                             ->columnSpanFull()
                             ->disabled(true),
@@ -157,6 +161,9 @@ class InspectionResource extends Resource
                                 Forms\Components\TextInput::make('user.name')
                                     ->label('Assessor')
                                     ->hiddenOn('create')
+                                    ->afterStateHydrated(function (?Model $record, callable $set) {
+                                        if ($record) $set('user.name', $record->user->name);
+                                    })
                                     ->disabled(),
                                 Forms\Components\TextInput::make('user_id')
                                     ->label('Assessor')
@@ -190,8 +197,6 @@ class InspectionResource extends Resource
                                 Forms\Components\Select::make('sub_component_id')
                                     ->label('Sub Component')
                                     ->options(function (callable $get) {
-                                        dd($get('component_id'));
-
                                         if ($get('component_id')) {
                                             return Parameter::whereParentId($get('component_id'))->pluck('name', 'id');
                                         }
