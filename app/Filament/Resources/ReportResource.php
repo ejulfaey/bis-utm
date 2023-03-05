@@ -228,7 +228,7 @@ class ReportResource extends Resource
                                             $set('npv_maintenance', '');
                                             $set('energy_usage', '');
                                             $set('water_usage', '');
-                                            $set('rental_value', '');
+                                            $set('rental_cost', '');
                                             $set('lcca', '');
                                         }
 
@@ -241,14 +241,14 @@ class ReportResource extends Resource
                                             $calculator = Calculator::find(1);
                                             $energy_usage = round($calculator->yearly_electrical_cost * $state, 2);
                                             $water_usage = round($calculator->yearly_water_cost * $state, 2);
-                                            $rental_value = RentalCost::find(1)->cost_room;
+                                            $rental_cost = RentalCost::find(1)->cost_room;
 
                                             $set('energy_usage', $energy_usage);
                                             $set('water_usage', $water_usage);
-                                            $set('rental_value', $rental_value);
+                                            $set('rental_cost', $rental_cost);
 
                                             $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
-                                                + $water_usage + $rental_value;
+                                                + $water_usage + $rental_cost;
 
                                             $set('lcca', round($lcca, 2));
                                         }
@@ -259,7 +259,7 @@ class ReportResource extends Resource
                                             $set('npv_maintenance', '');
                                             $set('energy_usage', '');
                                             $set('water_usage', '');
-                                            $set('rental_value', '');
+                                            $set('rental_cost', '');
                                             $set('lcca', '');
                                         }
 
@@ -273,14 +273,14 @@ class ReportResource extends Resource
                                             $calculator = Calculator::find(1);
                                             $energy_usage = round($calculator->yearly_electrical_cost * $state, 2);
                                             $water_usage = round($calculator->yearly_water_cost * $state, 2);
-                                            $rental_value = RentalCost::find(1)->cost_room;
+                                            $rental_cost = RentalCost::find(1)->cost_room;
 
                                             $set('energy_usage', $energy_usage);
                                             $set('water_usage', $water_usage);
-                                            $set('rental_value', $rental_value);
+                                            $set('rental_cost', $rental_cost);
                                             
                                             $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
-                                                + $water_usage + $rental_value;
+                                                + $water_usage + $rental_cost;
 
                                             $set('lcca', round($lcca, 2));
                                         }
@@ -317,7 +317,7 @@ class ReportResource extends Resource
                                 Forms\Components\TextInput::make('water_usage')
                                     ->label('Water usage cost (RM)')
                                     ->disabled(),
-                                Forms\Components\TextInput::make('rental_value')
+                                Forms\Components\TextInput::make('rental_cost')
                                     ->label('Rental Value (RM)')
                                     ->disabled(),
                             ]),
