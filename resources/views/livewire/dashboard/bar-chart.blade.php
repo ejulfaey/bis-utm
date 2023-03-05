@@ -1,4 +1,4 @@
-<div class="bg-white p-2 border border-gray-300 rounded-lg">
+<div class="bg-white p-2 border border-gray-300">
     <div id="{{ $chartId }}"></div>
 </div>
 @push('scripts')
