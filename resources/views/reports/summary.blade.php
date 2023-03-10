@@ -10,7 +10,7 @@
 </head>
 
 <body class="antialiased">
-    <div class="container mx-auto space-y-8">
+    <div class="py-10 container mx-auto space-y-8">
         <div class="flex justify-between">
             <div class="text-sm">
                 <h1 class="text-xl font-bold">
@@ -84,10 +84,10 @@
                         <td width="25%" class="font-semibold border border-gray-400 px-4 py-1.5">{{ $report->building_percent }}</td>
                     </tr>
                     <tr>
-                        <td width="25%" class="border border-gray-400 px-4 py-1.5">BCA Score</td>
-                        <td width="25%" class="font-semibold border border-gray-400 px-4 py-1.5">{{ $report->bca_score }}</td>
-                        <td width="25%" class="border border-gray-400 px-4 py-1.5">Building Classification</td>
-                        <td width="25%" class="font-semibold border border-gray-400 px-4 py-1.5">{{ $report->classification->name }}</td>
+                        <td width="25%" class="font-medium border border-gray-400 px-4 py-1.5">BCA Score</td>
+                        <td width="25%" class="{{ $report->color }} font-semibold border border-gray-400 px-4 py-1.5">{{ $report->bca_score }}</td>
+                        <td width="25%" class="font-medium border border-gray-400 px-4 py-1.5">Building Classification</td>
+                        <td width="25%" class="{{ $report->color }} font-semibold border border-gray-400 px-4 py-1.5">{{ $report->classification->name }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -141,7 +141,7 @@
         </div>
     </div>
     <script>
-        window.print();
+        // window.print();
     </script>
 
 </body>

@@ -41,4 +41,10 @@ class Report extends Model
         return $this->belongsTo(Parameter::class, 'classification_id');
     }
 
+    public function getColorAttribute()
+    {
+        if ($this->bca_score > 80) return 'bg-green-500 text-white';
+        else if ($this->bca_score > 70) return 'bg-blue-500 text-white';
+        else return 'bg-yellow-500';
+    }
 }
