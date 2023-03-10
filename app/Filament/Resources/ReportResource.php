@@ -64,8 +64,8 @@ class ReportResource extends Resource
 
                                     $codes = [
                                         'architectural',
-                                        'structural',
                                         'building',
+                                        'structural',
                                     ];
 
                                     $components = Parameter::select('id', 'name', 'value')
@@ -98,6 +98,11 @@ class ReportResource extends Resource
                             })
                             ->afterStateUpdated(function ($state, callable $set) {
                                 $project = Project::find($state);
+                                $codes = [
+                                    'architectural',
+                                    'structural',
+                                    'building',
+                                ];
 
                                 if ($project) {
 
@@ -107,12 +112,6 @@ class ReportResource extends Resource
 
                                     $initial_cost = ConstructionCost::firstWhere('building_type_id', $project->building_type_id);
                                     $set('initial_cost', $initial_cost->total_cost);
-
-                                    $codes = [
-                                        'architectural',
-                                        'structural',
-                                        'building',
-                                    ];
 
                                     $components = Parameter::select('id', 'name', 'value')
                                         ->whereGroupId(Parameter::COMPONENT)
@@ -141,11 +140,6 @@ class ReportResource extends Resource
 
                                     $set('classification', $classification->name);
                                 } else {
-                                    $codes = [
-                                        'architectural',
-                                        'structural',
-                                        'building',
-                                    ];
 
                                     foreach ($codes as  $code) {
                                         $set($code . '_score', null);
