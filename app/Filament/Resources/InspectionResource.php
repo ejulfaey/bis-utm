@@ -14,6 +14,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
+use App\Forms\Components\PhotoZoomer;
 use Filament\Resources\Table;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
@@ -124,19 +125,13 @@ class InspectionResource extends Resource
                                     $set('total_floor', $record?->project->total_floor);
                             })
                             ->disabled(true),
-                        Forms\Components\FileUpload::make('plan_attachment')
+                        PhotoZoomer::make('drawing_plan')
                             ->label('Drawing Plan')
-                            ->afterStateHydrated(function (?Model $record, callable $set) {
-                                if ($record) {
-                                    $set('plan_attachment', [$record?->project->plan_attachment]);
-                                } else {
-                                    $project = Project::find(request()->query('ownerRecord'));
-                                    if ($project) $set('plan_attachment', [$project->plan_attachment]);
-                                }
+                            ->src(function (callable $get) {
+                                $model = Inspection::find($get('id'));
+                                if ($model) return $model->project->plan_attachment;
                             })
-                            ->columnSpanFull()
-                            ->disabled(true),
-
+                            ->columnSpanFull(true)
                     ])
                     ->collapsed(false)
                     ->columns(3),
