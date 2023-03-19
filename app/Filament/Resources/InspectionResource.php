@@ -52,8 +52,7 @@ class InspectionResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_matrix')
                     ->label('Total Matrix')
-                    ->alignCenter()
-                    ->sortable(),
+                    ->alignCenter(),
                 Tables\Columns\TextColumn::make('classification.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
@@ -213,6 +212,15 @@ class InspectionResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('condition_score_id')
                                     ->label('Condition Score')
+                                    ->tooltip(function () {
+                                        $scores = Parameter::whereGroupId(Parameter::SCORE_CONDITION)->pluck('name', 'value');
+                                        $str = '';
+                                        foreach ($scores as $key => $value) {
+                                            $str .= $key . ' - ' . $value . ', ';
+                                        }
+                                        $str = rtrim($str, ', ');
+                                        return $str;
+                                    })
                                     ->options(Parameter::active()->whereGroupId(Parameter::SCORE_CONDITION)->pluck('value', 'id'))
                                     ->afterStateUpdated(function (callable $get, callable $set, $state) {
                                         if ($get('maintenance_score_id') && $state != null) {
@@ -231,6 +239,15 @@ class InspectionResource extends Resource
                                     ->required(),
                                 Forms\Components\Select::make('maintenance_score_id')
                                     ->label('Maintenance Score')
+                                    ->tooltip(function () {
+                                        $scores = Parameter::whereGroupId(Parameter::SCORE_MAINTENANCE)->pluck('name', 'value');
+                                        $str = '';
+                                        foreach ($scores as $key => $value) {
+                                            $str .= $key . ' - ' . $value . ', ';
+                                        }
+                                        $str = rtrim($str, ', ');
+                                        return $str;
+                                    })
                                     ->options(Parameter::active()->whereGroupId(Parameter::SCORE_MAINTENANCE)->pluck('value', 'id'))
                                     ->afterStateUpdated(function (callable $get, callable $set, $state) {
                                         if ($get('condition_score_id') && $state != null) {
@@ -293,6 +310,7 @@ class InspectionResource extends Resource
             'index' => Pages\ListInspections::route('/'),
             'create' => Pages\CreateInspection::route('/create'),
             'edit' => Pages\EditInspection::route('/{record}/edit'),
+            'show' => Pages\ViewInspection::route('/{record}/show'),
         ];
     }
 }

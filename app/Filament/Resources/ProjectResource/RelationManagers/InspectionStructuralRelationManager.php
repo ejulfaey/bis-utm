@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
+use App\Forms\Components\PhotoSlider;
 
 class InspectionStructuralRelationManager extends RelationManager
 {
@@ -73,27 +74,52 @@ class InspectionStructuralRelationManager extends RelationManager
                                 Forms\Components\Select::make('location')
                                     ->label('Location')
                                     ->relationship('location', 'name'),
-                            ]),
-                        Forms\Components\Select::make('component')
-                            ->label('Component')
-                            ->relationship('component', 'name'),
-                        Forms\Components\Select::make('subcomponent')
-                            ->label('Sub Component')
-                            ->relationship('subcomponent', 'name'),
-                        Grid::make(3)
-                            ->schema([
+                                Forms\Components\Select::make('component')
+                                    ->label('Component')
+                                    ->relationship('component', 'name'),
+                                Forms\Components\Select::make('subcomponent')
+                                    ->label('Sub Component')
+                                    ->relationship('subcomponent', 'name'),
                                 Forms\Components\Select::make('defect')
                                     ->label('Building Defect')
                                     ->relationship('defect', 'name'),
-                                Forms\Components\TextInput::make('condition_score')
-                                    ->label('Condition Score'),
-                                Forms\Components\TextInput::make('maintenance_score')
-                                    ->label('Maintenance Score'),
                             ]),
-                        Forms\Components\TextInput::make('total_matrix'),
-                        Forms\Components\TextInput::make('classification'),
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('condition_score')
+                                    ->label('Condition Score')
+                                    ->tooltip(function () {
+                                        $scores = Parameter::whereGroupId(Parameter::SCORE_CONDITION)->pluck('name', 'value');
+                                        $str = '';
+                                        foreach ($scores as $key => $value) {
+                                            $str .= $key . ' - ' . $value . ', ';
+                                        }
+                                        $str = rtrim($str, ', ');
+                                        return $str;
+                                    }),
+                                Forms\Components\TextInput::make('maintenance_score')
+                                    ->label('Maintenance Score')
+                                    ->tooltip(function () {
+                                        $scores = Parameter::whereGroupId(Parameter::SCORE_MAINTENANCE)->pluck('name', 'value');
+                                        $str = '';
+                                        foreach ($scores as $key => $value) {
+                                            $str .= $key . ' - ' . $value . ', ';
+                                        }
+                                        $str = rtrim($str, ', ');
+                                        return $str;
+                                    }),
+                                Forms\Components\TextInput::make('total_matrix'),
+                                Forms\Components\TextInput::make('classification'),
+                            ]),
                         Forms\Components\Textarea::make('remark')
                             ->columnSpan('full'),
+                        PhotoSlider::make('photos')
+                            ->options(function (callable $get) {
+                                $model = Inspection::find($get('id'))->photos;
+                                if ($model)
+                                    return $model->toArray();
+                            })
+                            ->columnSpanFull(),
                     ])->columns([
                         'sm' => 1,
                         'md' => 2,

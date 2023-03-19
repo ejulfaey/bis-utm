@@ -62,6 +62,8 @@ class InspectionsRelationManager extends RelationManager
                     ->url(fn ($livewire) => InspectionResource::getUrl('create', ['ownerRecord' => $livewire->ownerRecord->getKey()]))
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
+                    // ->url(fn (Model $record) => InspectionResource::getUrl('show', $record)),
                 Tables\Actions\EditAction::make()
                     ->url(fn (Model $record) => InspectionResource::getUrl('edit', $record))
                     ->successNotificationTitle('Inspection has been updated'),
