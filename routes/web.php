@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportController;
+use App\Http\Livewire\Projects\CreateProject;
+use App\Http\Livewire\Projects\EditProject;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -26,8 +28,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('logout', [AuthController::class, 'logout']);
     Route::name('filament.auth.logout')->post('filament/logout', [AuthController::class, 'logout']);
-    Route::name('report.')->prefix('report')->group(function () {
 
+    Route::name('new-projects.')->prefix('new-projects')->group(function () {
+        Route::name('create')->get('create', CreateProject::class);
+        Route::name('edit')->get('{project}/edit', EditProject::class);
+    });
+
+    Route::name('report.')->prefix('report')->group(function () {
         Route::name('project')->get('project', [ReportController::class, 'project']);
         Route::name('report')->get('report', [ReportController::class, 'report']);
         Route::name('summary')->get('summary/{report}', [ReportController::class, 'summary']);

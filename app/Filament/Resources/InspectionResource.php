@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 use App\Forms\Components\PhotoZoomer;
+use App\Models\Role;
 use Filament\Resources\Table;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
@@ -29,7 +30,10 @@ class InspectionResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return in_array(auth()->user()->role_id, [Role::SUPERADMIN, Role::ADMIN]);
+    }
 
     public static function table(Table $table): Table
     {
@@ -74,25 +78,29 @@ class InspectionResource extends Resource
                                 $project = Project::find(request()->query('ownerRecord'));
                                 return $project?->name;
                             })
-                            ->afterStateHydrated(function (callable $set, ?Model $record, Component $livewire) {
-                                if ($livewire instanceof Pages\EditInspection) {
-                                    $set('project', $record?->project->name);
-                                }
+                            ->afterStateHydrated(function (callable $set, ?Model $record) {
+                                $set('project', $record?->project->name);
                             })
                             ->columnSpanFull()
                             ->disabled(true)
                             ->hiddenOn('create'),
+                        /*
                         Forms\Components\Select::make('project')
                             ->label('Project')
-                            ->options(Project::pluck('name', 'id'))
-                            ->reactive()
-                            ->afterStateUpdated(function (callable $set, $state) {
-                                $project = Project::find($state);
+                            ->afterStateUpdated(function (?Model $record) {
+                                dd($record);
                             })
+                            ->options(Project::pluck('name', 'id'))
                             ->searchable()
                             ->columnSpanFull()
                             ->hiddenOn('edit')
+                            ->reactive()
                             ->required(),
+                            */
+                        Forms\Components\Select::make('project')
+                            ->label('Project')
+                            ->options(Project::pluck('name', 'id'))
+                            ->columnSpanFull(true),
                         Forms\Components\TextInput::make('assessor')
                             ->label('Project Leader')
                             ->default(function () {
@@ -125,6 +133,17 @@ class InspectionResource extends Resource
                                     $set('total_floor', $record?->project->total_floor);
                             })
                             ->disabled(true),
+                        Forms\Components\FileUpload::make('plan_attachment')
+                            ->label('Drawing Plan')
+                            ->directory('plans')
+                            ->acceptedFileTypes(['application/pdf', 'image/*'])
+                            ->maxSize(10240)
+                            ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                                return (string) str(date('dmyhis') . '.' . $file->extension())->prepend('plan-');
+                            })
+                            ->helperText('Maximum size is 10MB')
+                            ->columnSpan('full')
+                            ->hiddenOn('edit'),
                         PhotoZoomer::make('drawing_plan')
                             ->label('Drawing Plan')
                             ->src(function (callable $get) {
@@ -132,6 +151,7 @@ class InspectionResource extends Resource
                                 if ($model) return $model->project->plan_attachment;
                             })
                             ->columnSpanFull(true)
+                            ->hiddenOn('create')
                     ])
                     ->collapsed(false)
                     ->columns(3),
