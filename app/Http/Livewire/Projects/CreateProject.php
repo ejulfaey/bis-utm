@@ -22,11 +22,7 @@ class CreateProject extends Page implements Forms\Contracts\HasForms
     public $total_floor;
     public $area_of_building;
     public $plan_attachment;
-
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
+    public $continue = false;
 
     protected function getFormSchema(): array
     {
@@ -35,11 +31,8 @@ class CreateProject extends Page implements Forms\Contracts\HasForms
                 ->schema([
                     Forms\Components\TextInput::make('name')
                         ->maxLength(255)
-                        ->required(),
-                    Forms\Components\TextInput::make('project_leader')
-                        ->label('Project Leader')
-                        ->default(auth()->user()->name)
-                        ->disabled(true),
+                        ->required()
+                        ->columnSpanFull(),
                     Forms\Components\Grid::make(2)
                         ->schema([
                             Forms\Components\Select::make('building_type_id')
@@ -78,15 +71,15 @@ class CreateProject extends Page implements Forms\Contracts\HasForms
 
     public function submit()
     {
-        $this->user_id = auth()->id();
         $data = array_merge($this->form->getState(), ['user_id' => auth()->id()]);
         $project = Project::create($data);
+
         Notification::make()
             ->title('Saved successfully')
             ->icon('heroicon-o-check-circle')
             ->iconColor('success')
             ->send();
 
-        return redirect()->route('new-projects.edit', $project->id);
+        return $this->continue ? redirect()->route('new-projects.create') : redirect()->route('new-projects.edit', $project->id);
     }
 }
