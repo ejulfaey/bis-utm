@@ -39,7 +39,7 @@ class NewProject extends Page implements Tables\Contracts\HasTable
                 ->sortable()
                 ->searchable(),
             Tables\Columns\TextColumn::make('user.name')
-                ->label('Assessor')
+                ->label('Project Leader')
                 ->sortable()
                 ->searchable(),
             Tables\Columns\TextColumn::make('building_type.name')

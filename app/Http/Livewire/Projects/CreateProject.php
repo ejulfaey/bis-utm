@@ -61,7 +61,7 @@ class CreateProject extends Page implements Forms\Contracts\HasForms
                     Forms\Components\FileUpload::make('plan_attachment')
                         ->label('Drawing Plan')
                         ->directory('plans')
-                        ->acceptedFileTypes(['application/pdf', 'image/*'])
+                        ->image()
                         ->maxSize(10240)
                         ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
                             return (string) str(date('dmyhis') . '.' . $file->extension())->prepend('plan-');
@@ -76,7 +76,7 @@ class CreateProject extends Page implements Forms\Contracts\HasForms
         ];
     }
 
-    public function submit($other)
+    public function submit()
     {
         $this->user_id = auth()->id();
         $data = array_merge($this->form->getState(), ['user_id' => auth()->id()]);
@@ -87,6 +87,6 @@ class CreateProject extends Page implements Forms\Contracts\HasForms
             ->iconColor('success')
             ->send();
 
-        return $other ? redirect()->route('new-projects.create') : redirect()->route('new-projects.edit', $project->id);
+        return redirect()->route('new-projects.edit', $project->id);
     }
 }

@@ -34,7 +34,8 @@ class ProjectResource extends Resource
 
     protected static function shouldRegisterNavigation(): bool
     {
-        return in_array(auth()->user()->role_id, [Role::SUPERADMIN, Role::ADMIN]);
+        // return in_array(auth()->user()->role_id, [Role::SUPERADMIN, Role::ADMIN]);
+        return false;
     }
 
     public static function form(Form $form): Form

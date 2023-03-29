@@ -32,7 +32,8 @@ class InspectionResource extends Resource
 
     protected static function shouldRegisterNavigation(): bool
     {
-        return in_array(auth()->user()->role_id, [Role::SUPERADMIN, Role::ADMIN]);
+        // return in_array(auth()->user()->role_id, [Role::SUPERADMIN, Role::ADMIN]);
+        return false;
     }
 
     public static function table(Table $table): Table
@@ -144,6 +145,7 @@ class InspectionResource extends Resource
                             ->helperText('Maximum size is 10MB')
                             ->columnSpan('full')
                             ->hiddenOn('edit'),
+                        /*
                         PhotoZoomer::make('drawing_plan')
                             ->label('Drawing Plan')
                             ->src(function (callable $get) {
@@ -152,6 +154,7 @@ class InspectionResource extends Resource
                             })
                             ->columnSpanFull(true)
                             ->hiddenOn('create')
+                            */
                     ])
                     ->collapsed(false)
                     ->columns(3),

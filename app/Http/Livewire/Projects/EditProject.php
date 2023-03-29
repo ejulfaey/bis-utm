@@ -9,6 +9,7 @@ use Filament\Pages\Page;
 use Filament\Forms;
 use Livewire\TemporaryUploadedFile;
 use Filament\Notifications\Notification;
+use Filament\Pages\Actions\Action;
 
 class EditProject extends Page implements Forms\Contracts\HasForms
 {
@@ -89,21 +90,25 @@ class EditProject extends Page implements Forms\Contracts\HasForms
 
     public function submit()
     {
-        $project = Project::find($this->project->id);
-        $project->name = $this->project->name;
-        $project->building_type_id = $this->project->building_type_id;
-        $project->college_block = $this->project->college_block;
-        $project->total_floor = $this->project->total_floor;
-        $project->area_of_building = $this->project->area_of_building;
-        $project->plan_attachment = $this->project->plan_attachment;
-        $project->save();
+        $this->project->update(
+            $this->form->getState(),
+        );
 
         Notification::make()
             ->title('Updated successfully')
             ->icon('heroicon-o-check-circle')
             ->iconColor('success')
             ->send();
+    }
 
-        return back();
+    protected function getActions(): array
+    {
+        return [
+            Action::make('delete')
+                ->color('danger')
+                ->action(fn () => $this->project->delete())
+                ->after(fn () => redirect('/new-projects'))
+                ->requiresConfirmation(),
+        ];
     }
 }

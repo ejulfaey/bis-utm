@@ -23,7 +23,7 @@ class Calculator extends Page implements Forms\Contracts\HasForms
 
     protected static string $view = 'filament.pages.calculator';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public static function shouldRegisterNavigation() : bool
     {

@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportController;
+use App\Http\Livewire\Inspection\CreateInspect;
+use App\Http\Livewire\Inspection\EditInspect;
 use App\Http\Livewire\Projects\CreateProject;
 use App\Http\Livewire\Projects\EditProject;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +34,11 @@ Route::middleware('auth')->group(function () {
     Route::name('new-projects.')->prefix('new-projects')->group(function () {
         Route::name('create')->get('create', CreateProject::class);
         Route::name('edit')->get('{project}/edit', EditProject::class);
+    });
+
+    Route::name('inspection.')->prefix('inspection')->group(function () {
+        Route::name('create')->get('create', CreateInspect::class);
+        Route::name('edit')->get('{inspect}/edit', EditInspect::class);
     });
 
     Route::name('report.')->prefix('report')->group(function () {
