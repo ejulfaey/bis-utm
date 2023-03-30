@@ -5,8 +5,12 @@
             <a href="/new-projects" class="px-4 py-2 text-sm font-medium">
                 Back
             </a>
-            <button class="px-4 py-2 text-sm text-primary-500 font-medium rounded-lg shadow-sm bg-primary-50">Save</button>
-            <button wire:click="$set('continue', true)" class="px-4 py-2 text-sm text-white font-medium rounded-lg shadow-sm bg-primary-500 hover:bg-primary-500">Save & Create Another</button>
+            <x-filament::button>
+                Save
+            </x-filament::button>
+            <x-filament::button wire:click="$set('continue', true)" type="submit">
+                Save & Continue Inspection
+            </x-filament::button>
         </div>
     </form>
 </x-filament::page>

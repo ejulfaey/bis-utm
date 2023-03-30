@@ -16,7 +16,6 @@ class EditProject extends Page implements Forms\Contracts\HasForms
 
     use Forms\Concerns\InteractsWithForms;
 
-    protected static string $view = 'livewire.projects.edit-project';
 
     public Project $project;
     public $user_id;
@@ -26,6 +25,16 @@ class EditProject extends Page implements Forms\Contracts\HasForms
     public $total_floor;
     public $area_of_building;
     public $plan_attachment;
+
+    protected static string $view = 'livewire.projects.edit-project';
+
+    protected function getBreadcrumbs(): array
+    {
+        return [
+            '/new-projects' => 'Projects',
+            route('new-projects.edit', $this->project->id) => 'Edit',
+        ];
+    }
 
     public function mount(): void
     {

@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Project;
 use App\Models\Role;
+use Filament\Pages\Actions\Action;
 use Filament\Tables;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,15 +17,27 @@ class NewProject extends Page implements Tables\Contracts\HasTable
 
     protected static string $view = 'filament.pages.new-project';
 
-    protected static ?string $navigationLabel = 'Manage Projects';
+    protected static ?string $navigationLabel = 'Projects';
 
     protected static ?string $slug = "new-projects";
+
+    protected ?string $heading = "Manage Projects";
 
     protected static ?int $navigationSort = 2;
 
     public static function shouldRegisterNavigation(): bool
     {
         return in_array(auth()->user()->role_id, [Role::SUPERADMIN]);
+    }
+
+    protected function getActions(): array
+    {
+        return [
+            Action::make('create')
+                ->label('New Project')
+                ->icon('heroicon-o-plus')
+                ->url(fn () => route('new-projects.create')),
+        ];
     }
 
     protected function getTableQuery(): Builder

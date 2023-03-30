@@ -13,8 +13,6 @@ class CreateProject extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
-    protected static string $view = 'livewire.projects.create-project';
-
     public $name;
     public $user_id;
     public $building_type_id;
@@ -23,6 +21,16 @@ class CreateProject extends Page implements Forms\Contracts\HasForms
     public $area_of_building;
     public $plan_attachment;
     public $continue = false;
+
+    protected static string $view = 'livewire.projects.create-project';
+
+    protected function getBreadcrumbs(): array
+    {
+        return [
+            '/new-projects' => 'Projects',
+            route('new-projects.create') => 'Create',
+        ];
+    }
 
     protected function getFormSchema(): array
     {
@@ -80,6 +88,6 @@ class CreateProject extends Page implements Forms\Contracts\HasForms
             ->iconColor('success')
             ->send();
 
-        return $this->continue ? redirect()->route('new-projects.create') : redirect()->route('new-projects.edit', $project->id);
+        return $this->continue ? redirect()->route('inspection.create', ['project' => $project->id]) : redirect()->route('new-projects.edit', $project->id);
     }
 }

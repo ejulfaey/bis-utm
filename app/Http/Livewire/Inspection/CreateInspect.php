@@ -15,10 +15,6 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
-    protected static ?string $navigationLabel = 'Create Inspection';
-
-    protected static string $view = 'livewire.inspection.create-inspect';
-
     public Project $project;
     public $project_id;
     public $date;
@@ -37,11 +33,28 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
     public $classification_id;
     public $remark;
 
+    protected static ?string $navigationLabel = 'Create Inspection';
+
+    protected static string $view = 'livewire.inspection.create-inspect';
+
+    protected function getBreadcrumbs(): array
+    {
+        return [
+            '/inspection' => 'Inspection',
+            route('inspection.create') => 'Create',
+        ];
+    }
+
+
     public function mount(): void
     {
         $this->user_id = auth()->id();
         $this->date = today();
         $this->weather_id = 1;
+        if (request()->has('project')) {
+            $this->project = Project::with('user')->findOrFail(request()->project);
+            $this->project_id = $this->project->id;
+        }
     }
 
     protected function getFormSchema(): array

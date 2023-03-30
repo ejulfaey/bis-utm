@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Inspection as ModelsInspection;
+use Filament\Pages\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,11 +13,23 @@ class Inspection extends Page implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected static string $view = 'filament.pages.inspection';
 
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
     protected static ?int $navigationSort = 3;
+
+    protected ?string $heading = 'Manage Inspections';
+
+    protected function getActions(): array
+    {
+        return [
+            Action::make('create')
+                ->label('New Inspection')
+                ->icon('heroicon-o-plus')
+                ->url(fn () => route('inspection.create')),
+        ];
+    }
 
     protected function getTableQuery(): Builder
     {
@@ -29,7 +42,7 @@ class Inspection extends Page implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('id')
                 ->label('ID'),
             Tables\Columns\TextColumn::make('project.name')
-            
+
                 ->searchable()
                 ->sortable(),
             Tables\Columns\TextColumn::make('project.college_block')
