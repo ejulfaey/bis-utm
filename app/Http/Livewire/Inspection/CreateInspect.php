@@ -8,8 +8,11 @@ use App\Models\Parameter;
 use App\Models\Project;
 use Filament\Pages\Page;
 use Filament\Forms;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Livewire\TemporaryUploadedFile;
 
 class CreateInspect extends Page implements Forms\Contracts\HasForms
 {
@@ -32,6 +35,8 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
     public $total_matrix;
     public $classification_id;
     public $remark;
+    public $continue = false;
+    public $photos = [];
 
     protected static ?string $navigationLabel = 'Create Inspection';
 
@@ -44,7 +49,6 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
             route('inspection.create') => 'Create',
         ];
     }
-
 
     public function mount(): void
     {
@@ -180,6 +184,13 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
                     Forms\Components\Textarea::make('remark')
                         ->columnSpan('full')
                         ->maxLength(65535),
+                    Forms\Components\FileUpload::make('photos')
+                        ->directory('photos')
+                        ->image()
+                        ->multiple()
+                        ->maxSize(10240)
+                        ->helperText('Maximum size is 10MB')
+                        ->columnSpan('full'),
                 ])->columns([
                     'sm' => 1,
                     'md' => 2,
@@ -207,13 +218,29 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
         }
     }
 
-    public function submit($other)
+    public function submit()
     {
         $data = $this->form->getState();
+        $photos = $data['photos'];
         unset($data['project']);
-
+        unset($data['photos']);
         $inspect = Inspection::create(array_merge($data, ['user_id' => auth()->id()]));
 
-        return $other ? redirect()->route('inspection.create', ['project' => $this->project->id]) : redirect()->route('inspection.edit', $inspect);
+        $data_photo = Arr::map($photos, function (string $photo) use ($inspect) {
+            return [
+                'inspection_id' => $inspect->id,
+                'photo' => $photo
+            ];
+        });
+
+        DB::table('inspection_photos')->insert($data_photo);
+
+        Notification::make()
+            ->title('Saved successfully')
+            ->icon('heroicon-o-check-circle')
+            ->iconColor('success')
+            ->send();
+
+        return $this->continue ? redirect()->route('inspection.create', ['project' => $this->project->id]) : redirect()->route('inspection.edit', $inspect);
     }
 }

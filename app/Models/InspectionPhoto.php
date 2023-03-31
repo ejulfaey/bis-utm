@@ -12,6 +12,7 @@ class InspectionPhoto extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
+        'inspection_id',
         'photo',
         'description'
     ];
