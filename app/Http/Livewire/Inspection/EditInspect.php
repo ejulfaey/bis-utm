@@ -8,6 +8,7 @@ use App\Models\Parameter;
 use App\Models\Project;
 use Filament\Forms;
 use Filament\Notifications\Notification;
+use Filament\Pages\Actions\Action;
 use Livewire\Component;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Storage;
@@ -243,5 +244,19 @@ class EditInspect extends Page implements Forms\Contracts\HasForms
             ->icon('heroicon-o-check-circle')
             ->iconColor('success')
             ->send();
+    }
+
+    protected function getActions(): array
+    {
+        return [
+            Action::make('delete')
+                ->color('danger')
+                ->action(function () {
+                    $this->inspect->photos()->delete();
+                    $this->inspect->delete();
+                })
+                ->after(fn () => redirect('/inspection'))
+                ->requiresConfirmation(),
+        ];
     }
 }
