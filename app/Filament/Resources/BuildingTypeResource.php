@@ -38,6 +38,7 @@ class BuildingTypeResource extends Resource
             ->whereGroupId(Parameter::BUILDING_TYPE)
             ->orderBy('name');
     }
+    
     public static function form(Form $form): Form
     {
         return $form

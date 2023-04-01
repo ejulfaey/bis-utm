@@ -3,7 +3,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @forelse($getOptions() as $photo)
             <div class="p-1.5 border border-gray-300 rounded-md shadow">
-                <img src="{{ env('APP_URL') . '/storage/' . $photo['photo'] }}" alt="photo">
+                <img src="{{ Storage::url($photo) }}" alt="photo">
             </div>
             @empty
             <p class="text-gray-600">No photo added</p>

@@ -18,7 +18,7 @@ class PhotoSlider extends Field
 
     public function getOptions(): array
     {
-        return $this->evaluate($this->options);
+        return $this->evaluate($this->getState());
     }
 
 }

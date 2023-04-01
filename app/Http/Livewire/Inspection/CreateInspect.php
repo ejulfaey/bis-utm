@@ -82,7 +82,7 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
                         ->disabled(true),
                     Forms\Components\TextInput::make('project.total_floor')
                         ->disabled(true),
-                    PhotoZoomer::make('plan')
+                    PhotoZoomer::make('image')
                         ->label('Drawing Plan')
                         ->src($this->image ?? '')
                         ->reactive()
