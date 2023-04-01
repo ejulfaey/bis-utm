@@ -18,34 +18,42 @@ class Calculator extends Model
         'w_tariff',
     ];
 
+    protected $appends = [
+        'total_energy_usage',
+        'daily_electrical_cost',
+        'yearly_electrical_cost',
+        'total_water_usage',
+        'daily_water_cost',
+        'yearly_water_cost',
+    ];
+
     public function getTotalEnergyUsageAttribute()
     {
-        return $this->e_energy_of_consumption * $this->e_duration_of_consumption;
+        return round(floatval($this->e_energy_of_consumption) * floatval($this->e_duration_of_consumption), 2);
     }
 
     public function getDailyElectricalCostAttribute()
     {
-        return $this->total_energy_usage * $this->e_tariff;
+        return round($this->total_energy_usage * floatval($this->e_tariff), 2);
     }
 
     public function getYearlyElectricalCostAttribute()
     {
-        return $this->daily_electrical_cost * 365;
+        return round($this->daily_electrical_cost * 365, 2);
     }
 
     public function getTotalWaterUsageAttribute()
     {
-        return $this->w_usage_of_water * $this->w_no_of_occupants;
+        return round(floatval($this->w_usage_of_water) * floatval($this->w_no_of_occupants), 2);
     }
 
     public function getDailyWaterCostAttribute()
     {
-        return $this->total_water_usage * $this->w_tariff;
+        return round($this->total_water_usage * floatval($this->w_tariff), 2);
     }
 
     public function getYearlyWaterCostAttribute()
     {
-        return $this->daily_water_cost * 365;
+        return round($this->daily_water_cost * 365, 2);
     }
-
 }

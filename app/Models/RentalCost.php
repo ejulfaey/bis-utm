@@ -16,6 +16,6 @@ class RentalCost extends Model
 
     public function getTotalRentalAttribute()
     {
-        return $this->cost_room * $this->no_of_room * 365;
+        return round($this->cost_room * $this->no_of_room * 365, 2);
     }
 }

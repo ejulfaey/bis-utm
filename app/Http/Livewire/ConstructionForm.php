@@ -15,15 +15,8 @@ class ConstructionForm extends Component implements Forms\Contracts\HasForms
     use Forms\Concerns\InteractsWithForms;
 
     // Construction
-    public $area_of_building;
+    public ConstructionCost $cc;
     public $building_type_id;
-    public $construction_cost;
-    public $mechanical_cost;
-    public $electrical_cost;
-    public $hydraulic_cost;
-    public $fire_service_cost;
-    public $lift_cost;
-    public $total_cost;
     public $initial_cost;
 
     protected function getFormSchema(): array
@@ -31,44 +24,48 @@ class ConstructionForm extends Component implements Forms\Contracts\HasForms
         return [
             Section::make('Construction Cost (CC)')
                 ->schema([
+                    Forms\Components\Select::make('building_type_id')
+                        ->label('Type of building')
+                        ->options(Parameter::whereGroupId(Parameter::BUILDING_TYPE)->pluck('name', 'id'))
+                        ->reactive()
+                        ->searchable()
+                        ->afterStateUpdated(fn ($state) => $this->updateField($state))
+                        ->required(),
                     Grid::make(3)
+                        ->hidden(function (callable $get) {
+                            return $get('building_type_id') == 0;
+                        })
                         ->schema([
-                            Forms\Components\Select::make('building_type_id')
-                                ->label('Type of building')
-                                ->options(Parameter::whereGroupId(Parameter::BUILDING_TYPE)->pluck('name', 'id'))
-                                ->reactive()
-                                ->afterStateUpdated(fn ($state) => $this->updateField($state))
-                                ->required(),
-                            Forms\Components\TextInput::make('area_of_building')
+                            Forms\Components\TextInput::make('cc.area_of_building')
                                 ->label('Area of building (m2)')
                                 ->reactive()
                                 ->afterStateUpdated(fn () => $this->updateTotalCost())
                                 ->numeric(),
-                            Forms\Components\TextInput::make('construction_cost')
+                            Forms\Components\TextInput::make('cc.construction_cost')
                                 ->label('Construction Cost (RM/m2)')
                                 ->reactive()
                                 ->afterStateUpdated(fn () => $this->updateTotalCost())
                                 ->numeric(),
-                            Forms\Components\TextInput::make('mechanical_cost')
+                            Forms\Components\TextInput::make('cc.mechanical_cost')
                                 ->label('Mechanical Cost (RM/m2)')
                                 ->reactive()
                                 ->afterStateUpdated(fn () => $this->updateTotalCost())
                                 ->numeric(),
-                            Forms\Components\TextInput::make('electrical_cost')
+                            Forms\Components\TextInput::make('cc.electrical_cost')
                                 ->label('Electrical Cost (RM/m2)')
                                 ->reactive()
                                 ->afterStateUpdated(fn () => $this->updateTotalCost())
                                 ->numeric(),
-                            Forms\Components\TextInput::make('hydraulic_cost')
+                            Forms\Components\TextInput::make('cc.hydraulic_cost')
                                 ->label('Hydraulic Service Cost (RM/m2)')
                                 ->reactive()
                                 ->afterStateUpdated(fn () => $this->updateTotalCost())
                                 ->numeric(),
-                            Forms\Components\TextInput::make('fire_service_cost')
+                            Forms\Components\TextInput::make('cc.fire_service_cost')
                                 ->label('Fire Service Cost (RM/m2)')
                                 ->reactive()
                                 ->numeric(),
-                            Forms\Components\TextInput::make('lift_cost')
+                            Forms\Components\TextInput::make('cc.lift_cost')
                                 ->label('Lift/Escalator Cost (RM/m2)')
                                 ->reactive()
                                 ->afterStateUpdated(fn () => $this->updateTotalCost())
@@ -76,7 +73,7 @@ class ConstructionForm extends Component implements Forms\Contracts\HasForms
 
                             Grid::make(2)
                                 ->schema([
-                                    Forms\Components\TextInput::make('total_cost')
+                                    Forms\Components\TextInput::make('cc.total_cost')
                                         ->label('Total Cost Construction and Service (RM/m2)')
                                         ->reactive()
                                         ->disabled(),
@@ -93,47 +90,32 @@ class ConstructionForm extends Component implements Forms\Contracts\HasForms
 
     public function updateField($type)
     {
-        $construction = ConstructionCost::firstWhere('building_type_id', $type);
-        if ($construction) {
-            $this->area_of_building = $construction->area_of_building;
-            $this->construction_cost = $construction->construction_cost;
-            $this->mechanical_cost = $construction->mechanical_cost;
-            $this->electrical_cost = $construction->electrical_cost;
-            $this->hydraulic_cost = $construction->hydraulic_cost;
-            $this->fire_service_cost = $construction->fire_service_cost;
-            $this->lift_cost = $construction->lift_cost;
-            $this->total_cost = $construction->total_cost;
-            $this->initial_cost = number_format($this->total_cost * $this->area_of_building, 2);
-        }
+        $this->cc = ConstructionCost::firstWhere('building_type_id', $type);
+        $this->initial_cost = number_format(floatval($this->cc->total_cost) * $this->cc->area_of_building, 2);
     }
 
     public function updateTotalCost()
     {
+
         $total = array_sum([
-            $this->construction_cost,
-            $this->mechanical_cost,
-            $this->electrical_cost,
-            $this->hydraulic_cost,
-            $this->fire_service_cost,
-            $this->lift_cost
+            $this->cc->construction_cost,
+            $this->cc->mechanical_cost,
+            $this->cc->electrical_cost,
+            $this->cc->hydraulic_cost,
+            $this->cc->fire_service_cost,
+            $this->cc->lift_cost
         ]);
-        $this->total_cost = number_format($total, 2);
-        if ($this->area_of_building > 0)
-            $this->initial_cost = number_format($total * $this->area_of_building, 2);
+        $this->cc->total_cost = number_format($total, 2);
+        if ($this->cc->area_of_building > 0) $this->initial_cost = number_format(floatval($total) * $this->cc->area_of_building, 2);
     }
 
     public function saveConstruction(): void
     {
-        $construction = ConstructionCost::firstWhere('building_type_id', $this->building_type_id);
-        $construction->area_of_building = $this->area_of_building;
-        $construction->construction_cost = $this->construction_cost;
-        $construction->mechanical_cost = $this->mechanical_cost;
-        $construction->electrical_cost = $this->electrical_cost;
-        $construction->hydraulic_cost = $this->hydraulic_cost;
-        $construction->fire_service_cost = $this->fire_service_cost;
-        $construction->lift_cost = $this->lift_cost;
-        $construction->total_cost = $this->total_cost;
-        $construction->save();
+        $data = $this->form->getState()['cc'];
+        foreach ($data as $key => $d) {
+            $data[$key] = floatval(str_replace(",", "", $d));
+        }
+        $this->cc->update($data);
 
         Notification::make()
             ->title('Saved successfully')

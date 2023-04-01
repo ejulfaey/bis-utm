@@ -19,10 +19,10 @@ return new class extends Migration
             $table->decimal('no');
             $table->integer('location_id');
             $table->integer('subcomponent_id');
-            $table->decimal('area');
-            $table->decimal('cost');
+            $table->decimal(14, 2, 'area');
+            $table->decimal(14, 2, 'cost');
             $table->integer('no_of_unit');
-            $table->decimal('total_cost');
+            $table->decimal(14, 2, 'total_cost');
             $table->timestamps();
         });
     }

@@ -12,7 +12,7 @@ class OperatingForm extends Component implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
-    public Calculator $calculator;
+    public Calculator $cost;
 
     // Operating
     public $e_energy_of_consumption;
@@ -32,22 +32,7 @@ class OperatingForm extends Component implements Forms\Contracts\HasForms
 
     public function mount(): void
     {
-        $this->calculator = Calculator::first();
-
-        $this->form->fill([
-            'e_energy_of_consumption' => $this->calculator->e_energy_of_consumption,
-            'e_duration_of_consumption' => $this->calculator->e_duration_of_consumption,
-            'e_tariff' => $this->calculator->e_tariff,
-            'total_energy_usage' => $this->calculator->total_energy_usage,
-            'daily_electrical_cost' => $this->calculator->daily_electrical_cost,
-            'yearly_electrical_cost' => $this->calculator->yearly_electrical_cost,
-            'w_usage_of_water' => $this->calculator->w_usage_of_water,
-            'w_no_of_occupants' => $this->calculator->w_no_of_occupants,
-            'w_tariff' => $this->calculator->w_tariff,
-            'total_water_usage' => $this->calculator->total_water_usage,
-            'daily_water_cost' => $this->calculator->daily_water_cost,
-            'yearly_water_cost' => $this->calculator->yearly_water_cost,
-        ]);
+        $this->cost = Calculator::first();
     }
 
     protected function getFormSchema(): array
@@ -59,35 +44,29 @@ class OperatingForm extends Component implements Forms\Contracts\HasForms
                         ->schema([
                             Forms\Components\Grid::make(3)
                                 ->schema([
-                                    Forms\Components\TextInput::make('e_energy_of_consumption')
+                                    Forms\Components\TextInput::make('cost.e_energy_of_consumption')
                                         ->label('Energy of consumption (KWatt)')
-                                        ->numeric()
                                         ->reactive()
-                                        ->afterStateUpdated(fn ($state) => $this->updateField($state, 1)),
-                                    Forms\Components\TextInput::make('e_duration_of_consumption')
+                                        ->numeric(),
+                                    Forms\Components\TextInput::make('cost.e_duration_of_consumption')
                                         ->label('Duration of consumption (hour)')
-                                        ->numeric()
                                         ->reactive()
-                                        ->afterStateUpdated(fn ($state) => $this->updateField($state, 1)),
-                                    Forms\Components\TextInput::make('total_energy_usage')
+                                        ->numeric(),
+                                    Forms\Components\TextInput::make('cost.total_energy_usage')
                                         ->label('Total energy usage (Kwh/day)')
-                                        ->reactive()
                                         ->disabled(),
                                 ]),
                             Forms\Components\Grid::make(3)
                                 ->schema([
-                                    Forms\Components\TextInput::make('e_tariff')
+                                    Forms\Components\TextInput::make('cost.e_tariff')
                                         ->label('Tariff/rate of usage (RM)')
                                         ->numeric()
-                                        ->reactive()
-                                        ->afterStateUpdated(fn ($state) => $this->updateField($state, 1)),
-                                    Forms\Components\TextInput::make('daily_electrical_cost')
+                                        ->reactive(),
+                                    Forms\Components\TextInput::make('cost.daily_electrical_cost')
                                         ->label('Total electrical cost (RM/day)')
-                                        ->reactive()
                                         ->disabled(),
-                                    Forms\Components\TextInput::make('yearly_electrical_cost')
+                                    Forms\Components\TextInput::make('cost.yearly_electrical_cost')
                                         ->label('Total electrical cost (RM/year)')
-                                        ->reactive()
                                         ->disabled(),
                                 ]),
                         ]),
@@ -95,35 +74,29 @@ class OperatingForm extends Component implements Forms\Contracts\HasForms
                         ->schema([
                             Forms\Components\Grid::make(3)
                                 ->schema([
-                                    Forms\Components\TextInput::make('w_usage_of_water')
+                                    Forms\Components\TextInput::make('cost.w_usage_of_water')
                                         ->label('Usage of water demand (m3)')
                                         ->numeric()
-                                        ->reactive()
-                                        ->afterStateUpdated(fn ($state) => $this->updateField($state, 2)),
-                                    Forms\Components\TextInput::make('w_no_of_occupants')
+                                        ->reactive(),
+                                    Forms\Components\TextInput::make('cost.w_no_of_occupants')
                                         ->label('No. of occupants')
                                         ->numeric()
-                                        ->reactive()
-                                        ->afterStateUpdated(fn ($state) => $this->updateField($state, 2)),
-                                    Forms\Components\TextInput::make('total_water_usage')
+                                        ->reactive(),
+                                    Forms\Components\TextInput::make('cost.total_water_usage')
                                         ->label('Total water usage (m3/day)')
-                                        ->reactive()
                                         ->disabled(),
                                 ]),
                             Forms\Components\Grid::make(3)
                                 ->schema([
-                                    Forms\Components\TextInput::make('w_tariff')
+                                    Forms\Components\TextInput::make('cost.w_tariff')
                                         ->label('Tariff/rate of usage (RM)')
                                         ->numeric()
-                                        ->reactive()
-                                        ->afterStateUpdated(fn ($state) => $this->updateField($state, 2)),
-                                    Forms\Components\TextInput::make('daily_water_cost')
+                                        ->reactive(),
+                                    Forms\Components\TextInput::make('cost.daily_water_cost')
                                         ->label('Total water cost (RM/day)')
-                                        ->reactive()
                                         ->disabled(),
-                                    Forms\Components\TextInput::make('yearly_water_cost')
+                                    Forms\Components\TextInput::make('cost.yearly_water_cost')
                                         ->label('Total water cost (RM/year)')
-                                        ->reactive()
                                         ->disabled(),
                                 ]),
                         ]),
@@ -131,23 +104,9 @@ class OperatingForm extends Component implements Forms\Contracts\HasForms
         ];
     }
 
-    public function updateField($state, $type): void
-    {
-        if ($type == 1 && $this->e_energy_of_consumption && $this->e_duration_of_consumption && $this->e_tariff) {
-            $this->total_energy_usage = $this->e_energy_of_consumption * $this->e_duration_of_consumption;
-            $this->daily_electrical_cost = $this->total_energy_usage * $this->e_tariff;
-            $this->yearly_electrical_cost = $this->daily_electrical_cost * 365;
-        }
-        if ($type != 1 && $this->w_usage_of_water && $this->w_no_of_occupants && $this->w_tariff) {
-            $this->total_water_usage = $this->w_usage_of_water * $this->w_no_of_occupants;
-            $this->daily_water_cost = $this->total_water_usage * $this->w_tariff;
-            $this->yearly_water_cost = $this->daily_water_cost * 365;
-        }
-    }
-
     public function saveOperating(): void
     {
-        $params = Arr::only($this->form->getState(), [
+        $params = Arr::only($this->form->getState()['cost'], [
             'e_energy_of_consumption',
             'e_duration_of_consumption',
             'e_tariff',
@@ -156,8 +115,19 @@ class OperatingForm extends Component implements Forms\Contracts\HasForms
             'w_tariff',
         ]);
 
-        Calculator::whereId(1)
-            ->update($params);
+        foreach ($params as $key => $d) {
+            $params[$key] = floatval(str_replace(",", "", $d));
+        }
+
+        $cost = Calculator::find(1);
+        $cost->setAppends([]);
+        $cost->e_energy_of_consumption = $this->cost->e_energy_of_consumption;
+        $cost->e_duration_of_consumption = $this->cost->e_duration_of_consumption;
+        $cost->e_tariff = $this->cost->e_tariff;
+        $cost->w_usage_of_water = $this->cost->w_usage_of_water;
+        $cost->w_no_of_occupants = $this->cost->w_no_of_occupants;
+        $cost->w_tariff = $this->cost->w_tariff;
+        $cost->save();
 
         Notification::make()
             ->title('Saved successfully')
