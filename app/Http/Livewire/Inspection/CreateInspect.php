@@ -9,10 +9,8 @@ use App\Models\Project;
 use Filament\Pages\Page;
 use Filament\Forms;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Livewire\TemporaryUploadedFile;
 
 class CreateInspect extends Page implements Forms\Contracts\HasForms
 {
@@ -36,6 +34,7 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
     public $classification_id;
     public $remark;
     public $continue = false;
+    public $image;
     public $photos = [];
 
     protected static ?string $navigationLabel = 'Create Inspection';
@@ -58,6 +57,7 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
         if (request()->has('project')) {
             $this->project = Project::with('user')->findOrFail(request()->project);
             $this->project_id = $this->project->id;
+            $this->image = $this->project->plan_attachment;
         }
     }
 
@@ -82,12 +82,11 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
                         ->disabled(true),
                     Forms\Components\TextInput::make('project.total_floor')
                         ->disabled(true),
-                    /*
-                    PhotoZoomer::make('project.plan_attachment')
+                    PhotoZoomer::make('plan')
                         ->label('Drawing Plan')
-                        ->src($this->project->plan_attachment ?? '')
+                        ->src($this->image ?? '')
+                        ->reactive()
                         ->columnSpanFull(true)
-                        */
                 ])
                 ->columns(3),
             Forms\Components\Section::make('BCA Inventory')
@@ -201,7 +200,13 @@ class CreateInspect extends Page implements Forms\Contracts\HasForms
 
     public function onChangeProject($id)
     {
-        $this->project = Project::with('user')->find($id);
+        if ($id) {
+            $this->project = Project::with('user')->find($id);
+            $this->image = $this->project->plan_attachment;
+        } else {
+            $this->image = "";
+        }
+        $this->dispatchFormEvent('photozoom::update', $this->image);
     }
 
     public function onChangeResult()

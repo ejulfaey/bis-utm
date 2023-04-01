@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Inspection;
 
+use App\Forms\Components\PhotoZoomer;
 use App\Models\Inspection;
 use App\Models\InspectionPhoto;
 use App\Models\Parameter;
@@ -22,6 +23,7 @@ class EditInspect extends Page implements Forms\Contracts\HasForms
     public $total_matrix;
     public $ids;
     public $current_index;
+    public $image;
     public $photos = [];
 
     protected static ?string $navigationLabel = 'Edit Inspection';
@@ -45,6 +47,7 @@ class EditInspect extends Page implements Forms\Contracts\HasForms
         $this->project = $this->inspect->project->load('user');
         $this->total_matrix = $this->inspect->total_matrix;
         $this->photos = $this->inspect->photos->pluck('photo', 'id')->toArray();
+        $this->image = $this->inspect->project->plan_attachment;
     }
 
     protected function getFormSchema(): array
@@ -65,12 +68,11 @@ class EditInspect extends Page implements Forms\Contracts\HasForms
                         ->disabled(true),
                     Forms\Components\TextInput::make('project.total_floor')
                         ->disabled(true),
-                    /*
-                    PhotoZoomer::make('project.plan_attachment')
+                    PhotoZoomer::make('plan')
                         ->label('Drawing Plan')
-                        ->src($this->project->plan_attachment ?? '')
+                        ->src($this->image ?? '')
+                        ->reactive()
                         ->columnSpanFull(true)
-                        */
                 ])
                 ->columns(3)
                 ->collapsible(),
@@ -205,11 +207,7 @@ class EditInspect extends Page implements Forms\Contracts\HasForms
     // $type = 1, next, $type = 0, prev
     public function rotate($type)
     {
-        if ($type) {
-            $id = $this->ids[$this->current_index + 1];
-        } else {
-            $id = $this->ids[$this->current_index - 1];
-        }
+        $id = $type ? $this->ids[$this->current_index + 1] : $this->ids[$this->current_index - 1];
         return redirect()->route('inspection.edit', Inspection::find($id));
     }
 
