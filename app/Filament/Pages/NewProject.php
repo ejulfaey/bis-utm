@@ -4,10 +4,13 @@ namespace App\Filament\Pages;
 
 use App\Models\Project;
 use App\Models\Role;
+use Closure;
 use Filament\Pages\Actions\Action;
 use Filament\Tables;
 use Filament\Pages\Page;
+use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class NewProject extends Page implements Tables\Contracts\HasTable
 {
@@ -45,6 +48,11 @@ class NewProject extends Page implements Tables\Contracts\HasTable
         return Project::latest();
     }
 
+    protected function getTableRecordUrlUsing(): ?Closure
+    {
+        return fn (Model $record): string => route('new-projects.edit', $record);
+    }
+
     protected function getTableColumns(): array
     {
         return [
@@ -79,4 +87,5 @@ class NewProject extends Page implements Tables\Contracts\HasTable
                 ->url(fn (Project $record): string => route('new-projects.edit', $record)),
         ];
     }
+
 }

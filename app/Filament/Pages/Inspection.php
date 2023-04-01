@@ -5,12 +5,16 @@ namespace App\Filament\Pages;
 use App\Forms\Components\PhotoSlider;
 use App\Models\Inspection as ModelsInspection;
 use App\Models\Parameter;
+use App\Models\Project;
+use Closure;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Support\Str;
 
 class Inspection extends Page implements Tables\Contracts\HasTable
 {
@@ -37,6 +41,11 @@ class Inspection extends Page implements Tables\Contracts\HasTable
     protected function getTableQuery(): Builder
     {
         return ModelsInspection::with('project')->latest();
+    }
+
+    protected function getTableRecordUrlUsing(): ?Closure
+    {
+        return fn (Model $record): string => route('inspection.edit', $record);
     }
 
     protected function getTableColumns(): array
@@ -159,6 +168,29 @@ class Inspection extends Page implements Tables\Contracts\HasTable
                                 ->columnSpanFull(),
                         ]),
                 ]),
+        ];
+    }
+
+    protected function getTableBulkActions(): array
+    {
+        return [
+            Tables\Actions\BulkAction::make('test'),
+        ];
+    }
+
+    protected function getTableFilters(): array
+    {
+        $projects = Project::orderBy('name')
+            ->get()
+            ->map(function ($project) {
+                return Filter::make(Str::slug($project->name))
+                    ->label($project->name)
+                    ->query(fn (Builder $query): Builder => $query->whereProjectId($project->id));
+            })
+            ->toArray();
+
+        return [
+            ...$projects,
         ];
     }
 }
