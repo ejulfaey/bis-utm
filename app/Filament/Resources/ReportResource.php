@@ -88,7 +88,7 @@ class ReportResource extends Resource
                                         $set($codes[$index] . '_score', $score);
                                         $set($codes[$index] . '_percent', $percent);
                                     }
-                                    $set('bca_score', $bca_score);
+                                    $set('bca_score', round($bca_score, 2));
                                     $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION_BUILDING)
                                         ->whereRaw("? between `from` and `to`", [round($bca_score)])
                                         ->first();
@@ -100,8 +100,8 @@ class ReportResource extends Resource
                                 $project = Project::find($state);
                                 $codes = [
                                     'architectural',
-                                    'structural',
                                     'building',
+                                    'structural',
                                 ];
 
                                 if ($project) {
@@ -133,7 +133,7 @@ class ReportResource extends Resource
                                         $set($codes[$index] . '_score', $score);
                                         $set($codes[$index] . '_percent', $percent);
                                     }
-                                    $set('bca_score', $bca_score);
+                                    $set('bca_score', round($bca_score, 2));
                                     $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION_BUILDING)
                                         ->whereRaw("? between `from` and `to`", [round($bca_score)])
                                         ->first();
@@ -228,7 +228,7 @@ class ReportResource extends Resource
 
                                         if ($state && $get('discount_rate')) {
                                             $npv = $get('maintenance_cost') / pow((1 + $get('discount_rate') / 100), $state);
-                                            $set('npv_maintenance', $npv);
+                                            $set('npv_maintenance', round($npv, 2));
                                         }
 
                                         if ($state) {
@@ -241,10 +241,13 @@ class ReportResource extends Resource
                                             $set('water_usage', $water_usage);
                                             $set('rental_cost', $rental_cost);
 
-                                            $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
-                                                + $water_usage + $rental_cost;
-
-                                            $set('lcca', round($lcca, 2));
+                                            if (
+                                                $get('initial_cost') && $get('npv_maintenance')
+                                            ) {
+                                                $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
+                                                    + $water_usage + $rental_cost;
+                                                $set('lcca', round($lcca, 2));
+                                            }
                                         }
                                     })
                                     ->afterStateUpdated(function (callable $get, callable $set, $state) {
@@ -259,8 +262,7 @@ class ReportResource extends Resource
 
                                         if ($state && $get('discount_rate')) {
                                             $npv = $get('maintenance_cost') / pow((1 + $get('discount_rate') / 100), $state);
-                                            $npv = round($npv, 3);
-                                            $set('npv_maintenance', $npv);
+                                            $set('npv_maintenance', round($npv, 2));
                                         }
 
                                         if ($state) {
@@ -272,11 +274,12 @@ class ReportResource extends Resource
                                             $set('energy_usage', $energy_usage);
                                             $set('water_usage', $water_usage);
                                             $set('rental_cost', $rental_cost);
-                                            
-                                            $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
-                                                + $water_usage + $rental_cost;
 
-                                            $set('lcca', round($lcca, 2));
+                                            if ($get('initial_cost') && $get('npv_maintenance')) {
+                                                $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
+                                                    + $water_usage + $rental_cost;
+                                                $set('lcca', round($lcca, 2));
+                                            }
                                         }
                                     })
                                     ->required(),
@@ -287,8 +290,11 @@ class ReportResource extends Resource
 
                                         if ($state && $get('time_period')) {
                                             $npv = $get('maintenance_cost') / pow((1 + $state / 100), $get('time_period'));
-                                            $npv = round($npv, 3);
-                                            $set('npv_maintenance', $npv);
+                                            $set('npv_maintenance', round($npv, 2));
+
+                                            $lcca = $get('initial_cost') + $npv + $get('energy_usage')
+                                                + $get('water_usage') + $get('rental_cost');
+                                            $set('lcca', round($lcca, 2));
                                         }
                                     })
                                     ->reactive()
