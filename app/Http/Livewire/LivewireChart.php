@@ -15,7 +15,6 @@ class LivewireChart extends Component
         $this->chartId = $chartId;
         $this->label = $label;
         $this->data = $data;
-        $this->emit('init', 'test');
     }
 
     public function render()

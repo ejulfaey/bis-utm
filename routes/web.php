@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
 
     Route::name('report.')->prefix('report')->group(function () {
         Route::name('project')->get('project', [ReportController::class, 'project']);
+        Route::name('inspection')->get('{$records}/inspection', [ReportController::class, 'inspection']);
         Route::name('report')->get('report', [ReportController::class, 'report']);
         Route::name('summary')->get('summary/{report}', [ReportController::class, 'summary']);
     });

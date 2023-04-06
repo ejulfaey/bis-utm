@@ -40,6 +40,9 @@ class NewProject extends Page implements Tables\Contracts\HasTable
                 ->label('New Project')
                 ->icon('heroicon-o-plus')
                 ->url(fn () => route('new-projects.create')),
+            Action::make('print')
+                ->icon('heroicon-o-printer')
+                ->url(fn () => route('report.project')),
         ];
     }
 
@@ -87,5 +90,4 @@ class NewProject extends Page implements Tables\Contracts\HasTable
                 ->url(fn (Project $record): string => route('new-projects.edit', $record)),
         ];
     }
-
 }

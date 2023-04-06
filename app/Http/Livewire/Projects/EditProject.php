@@ -16,7 +16,6 @@ class EditProject extends Page implements Forms\Contracts\HasForms
 
     use Forms\Concerns\InteractsWithForms;
 
-
     public Project $project;
     public $user_id;
     public $project_leader;
@@ -109,6 +108,12 @@ class EditProject extends Page implements Forms\Contracts\HasForms
             ->iconColor('success')
             ->send();
     }
+
+
+
+
+
+
 
     protected function getActions(): array
     {

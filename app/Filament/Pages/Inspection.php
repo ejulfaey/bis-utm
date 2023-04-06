@@ -3,9 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Forms\Components\PhotoSlider;
+use App\Http\Livewire\LivewireChart;
 use App\Models\Inspection as ModelsInspection;
 use App\Models\Parameter;
 use App\Models\Project;
+use App\Traits\PrintTrait;
 use Closure;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Page;
@@ -14,11 +16,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms;
 use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 class Inspection extends Page implements Tables\Contracts\HasTable
 {
-    use Tables\Concerns\InteractsWithTable;
+    use Tables\Concerns\InteractsWithTable, PrintTrait;
 
     protected static string $view = 'filament.pages.inspection';
 
@@ -35,6 +38,9 @@ class Inspection extends Page implements Tables\Contracts\HasTable
                 ->label('New Inspection')
                 ->icon('heroicon-o-plus')
                 ->url(fn () => route('inspection.create')),
+            // Action::make('print')
+            //     ->icon('heroicon-o-printer')
+            //     ->url(fn () => route('report.inspection')),
         ];
     }
 
@@ -174,7 +180,8 @@ class Inspection extends Page implements Tables\Contracts\HasTable
     protected function getTableBulkActions(): array
     {
         return [
-            Tables\Actions\BulkAction::make('test'),
+            Tables\Actions\BulkAction::make('print')
+                ->action(fn (Collection $records) => $this->printInspection($records)),
         ];
     }
 
@@ -192,5 +199,10 @@ class Inspection extends Page implements Tables\Contracts\HasTable
         return [
             ...$projects,
         ];
+    }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
     }
 }

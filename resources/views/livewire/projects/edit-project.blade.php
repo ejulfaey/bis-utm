@@ -1,4 +1,4 @@
-<x-filament::page>
+<x-filament::page class="space-y-4">
     <form wire:submit.prevent="submit" class="space-y-4">
         {{ $this->form }}
         <div class="flex gap-x-2">
@@ -10,4 +10,5 @@
             </x-filament::button>
         </div>
     </form>
+    <livewire:projects.project-tab :project="$project" />
 </x-filament::page>

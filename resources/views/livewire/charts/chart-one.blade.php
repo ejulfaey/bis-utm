@@ -1,4 +1,4 @@
-<div id="{{ $chartId }}"></div>
+<div id="chart-1"></div>
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
@@ -15,13 +15,13 @@
         }
     };
 
-    var chart = new ApexCharts(document.querySelector("#{{ $chartId }}"), options);
-    chart.render();
+    var chart1 = new ApexCharts(document.querySelector("#chart-1"), options);
+    chart1.render();
 
-    Livewire.on('refreshLivewireChart', (charts) => {
-        chart.updateOptions({
-            labels: charts['chart-1']['label'],
-            series: charts['chart-1']['data'],
+    Livewire.on('refreshChartOne', (charts) => {
+        chart1.updateOptions({
+            labels: charts['label'],
+            series: charts['data'],
         });
     });
 </script>

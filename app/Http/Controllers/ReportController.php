@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Report;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Str;
@@ -13,8 +14,19 @@ class ReportController extends Controller
 {
     public function project(Request $request)
     {
-        $projects = Project::all();
+        $projects = Project::whereNull('deleted_at')
+            ->get();
         return (new FastExcel($projects))->download('PROJECTS-' . now()->format('ymdHIs') . '.xlsx');
+    }
+
+    public function inspection(Collection $records)
+    {
+        return (new FastExcel($records))->download('test.xlsx', function ($record) {
+            return [
+                'Date' => $record->date,
+                'Project' => $record->project->name,
+            ];
+        });
     }
 
     public function report(Request $request)
