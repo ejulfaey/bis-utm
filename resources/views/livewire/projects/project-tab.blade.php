@@ -14,13 +14,13 @@
     <!-- Display list of tabs for all components -->
     <ul class="flex justify-center gap-x-2">
         <li>
-            <button wire:click.prevent="setSelectedTab('all')" class="border px-4 py-2 {{ $selectedTab === 'all' ? 'bg-primary-600 text-white' : 'bg-white text-primary-600' }}">
+            <button wire:click.prevent="setSelectedTab('all')" class="border px-4 py-2 rounded-md border-gray-200 {{ $selectedTab === 'all' ? 'bg-primary-600 text-white' : 'bg-white text-primary-600' }}">
                 All
             </button>
         </li>
         @foreach ($this->tabs as $key => $tab)
         <li>
-            <button wire:click.prevent="setSelectedTab('{{ $key }}')" class="border px-4 py-2 {{ $selectedTab == $key ? 'bg-primary-600 text-white' : 'bg-white text-primary-600' }}">
+            <button wire:click.prevent="setSelectedTab('{{ $key }}')" class="border px-4 py-2 rounded-md border-gray-200 {{ $selectedTab == $key ? 'bg-primary-600 text-white' : 'bg-white text-primary-600' }}">
                 {{ $tab }}
             </button>
         </li>
