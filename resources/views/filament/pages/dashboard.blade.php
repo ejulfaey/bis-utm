@@ -15,7 +15,7 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <livewire:dashboard.donut-chart title="Components" chartId="chart-4" :label="$chart[3]['label']" :dataset="$chart[3]['dataset']" />
-            <livewire:dashboard.bar-chart title="Sub Components" chartId="chart-5" :label="$chart[4]['label']" :dataset="$chart[4]['dataset']" />
+            <livewire:dashboard.donut-chart title="Sub Components" chartId="chart-5" :label="$chart[4]['label']" :dataset="$chart[4]['dataset']" />
         </div>
     </div>
 </div>
