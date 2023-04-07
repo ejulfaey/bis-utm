@@ -13,9 +13,9 @@ class ListReports extends ListRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
-            Actions\Action::make('print')
-                ->url(fn () => route('report.report')),
+            Actions\CreateAction::make()
+                ->label('New Report')
+                ->icon('heroicon-o-plus'),
         ];
     }
 }

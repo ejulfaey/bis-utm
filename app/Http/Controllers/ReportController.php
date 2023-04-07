@@ -12,13 +12,6 @@ use Spatie\Browsershot\Browsershot;
 
 class ReportController extends Controller
 {
-    public function project(Request $request)
-    {
-        $projects = Project::whereNull('deleted_at')
-            ->get();
-        return (new FastExcel($projects))->download('PROJECTS-' . now()->format('ymdHIs') . '.xlsx');
-    }
-
     public function report(Request $request)
     {
         $reports = Report::all();

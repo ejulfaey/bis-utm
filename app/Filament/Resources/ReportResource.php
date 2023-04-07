@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReportResource\Pages;
-use App\Filament\Resources\ReportResource\RelationManagers;
 use App\Models\Calculator;
 use App\Models\ConstructionCost;
 use App\Models\Inspection;
@@ -13,17 +12,22 @@ use App\Models\Project;
 use App\Models\RentalCost;
 use App\Models\Report;
 use App\Models\Role;
+use App\Traits\PrintTrait;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class ReportResource extends Resource
 {
+    use PrintTrait;
+
     protected static ?string $model = Report::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-report';
@@ -355,14 +359,48 @@ class ReportResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('print')
-                    ->label('Print')
+                    ->label('Print Summary')
                     ->icon('heroicon-o-printer')
                     ->url(function (Report $record) {
                         return route('report.summary', $record);
                     }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkAction::make('print')
+                    ->icon('heroicon-o-printer')
+                    ->action(function (Collection $records) {
+                        return response()->streamDownload(function () use ($records) {
+                            return (new FastExcel($records))->export('php://output', function ($record) {
+                                return [
+                                    'Date' => $record->created_at->format('d/m/Y'),
+                                    'Project' => $record->project->name,
+                                    'Architectural Score' => $record->architectural_score,
+                                    'Architectural Percent' => $record->architectural_percent,
+                                    'Structural Score' => $record->structural_score,
+                                    'Structural Percent' => $record->structural_percent,
+                                    'Building Service Score' => $record->building_score,
+                                    'Building Service Percent' => $record->building_percent,
+                                    'BCA Score' => $record->bca_score,
+                                    'Building Classification' => $record->classification->name,
+                                    'Cost of Maintenance' => $record->maintenance_cost,
+                                    'Time Period' => $record->time_period,
+                                    'NPV For Maintenance' => $record->npv_maintenance,
+                                    'Initial Cost of Construction' => $record->initial_cost,
+                                    'Energy Usage Cost' => $record->energy_usage,
+                                    'Water Usage Cost' => $record->water_usage,
+                                    'Rental Value' => $record->rental_cost,
+                                    'Life Cycle Cost Analysis' => $record->lcca,
+                                    'Summary' => $record->summary,
+                                ];
+                            });
+                        }, sprintf('REPORTS-' . now()->format('ymdHIs') . '.xlsx', date('Y-m-d')));
+                    }),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->action(function (Collection $records) {
+                        $records->each->delete();
+                    })
+                    ->requiresConfirmation(),
+
             ]);
     }
 

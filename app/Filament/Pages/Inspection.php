@@ -182,6 +182,7 @@ class Inspection extends Page implements Tables\Contracts\HasTable
     {
         return [
             Tables\Actions\BulkAction::make('print')
+                ->icon('heroicon-o-printer')
                 ->action(fn (Collection $records) => $this->printInspection($records)),
         ];
     }

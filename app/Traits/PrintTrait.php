@@ -52,6 +52,35 @@ trait PrintTrait
                     'Created Date' => $record->created_at->format('d/m/Y'),
                 ];
             });
+        }, sprintf('PROJECTS-' . now()->format('ymdHIs') . '.xlsx', date('Y-m-d')));
+    }
+
+    public function printReport(Collection $records)
+    {
+        return response()->streamDownload(function () use ($records) {
+            return (new FastExcel($records))->export('php://output', function ($record) {
+                return [
+                    'Date' => $record->created_at->format('d/m/Y'),
+                    'Project' => $record->project->name,
+                    'Architectural Score' => $record->architectural_score,
+                    'Architectural Percent' => $record->architectural_percent,
+                    'Structural Score' => $record->structural_score,
+                    'Structural Percent' => $record->structural_percent,
+                    'Building Service Score' => $record->building_score,
+                    'Building Service Percent' => $record->building_percent,
+                    'BCA Score' => $record->bca_score,
+                    'Building Classification' => $record->classification->name,
+                    'Cost of Maintenance' => $record->maintenance_cost,
+                    'Time Period' => $record->time_period,
+                    'NPV For Maintenance' => $record->npv_maintenance,
+                    'Initial Cost of Construction' => $record->initial_cost,
+                    'Energy Usage Cost' => $record->energy_usage,
+                    'Water Usage Cost' => $record->water_usage,
+                    'Rental Value' => $record->rental_cost,
+                    'Life Cycle Cost Analysis' => $record->lcca,
+                    'Summary' => $record->summary,
+                ];
+            });
         }, sprintf('REPORTS-' . now()->format('ymdHIs') . '.xlsx', date('Y-m-d')));
     }
 }
