@@ -34,23 +34,20 @@ class ProjectTab extends Component implements Tables\Contracts\HasTable
 
     public function refreshStats()
     {
-        $score = Inspection::whereProjectId($this->project->id)
+        $inspects = Inspection::whereProjectId($this->project->id)
             ->when(function () {
                 return $this->selectedTab !== 'all';
             }, function ($query) {
                 return $query->whereComponentId($this->selectedTab);
             })
-            ->get()
-            ->map(function ($model) {
-                return $model->total_matrix;
-            })
-            ->sum();
+            ->get();
+        $total_matrix = $inspects->map(fn ($model) => $model->total_matrix)->sum();
 
         if ($this->selectedTab === 'all') {
             $this->stats = [
                 'score' => [
                     'label' => 'Total Matrix',
-                    'value' => $score,
+                    'value' => $total_matrix,
                 ],
                 'percent' => [
                     'label' => 'Percent',
@@ -58,17 +55,26 @@ class ProjectTab extends Component implements Tables\Contracts\HasTable
                 ],
             ];
         } else {
-            $this->stats = [
-                'score' => [
-                    'label' => 'Total Matrix',
-                    'value' => $score,
-                ],
-                'percent' => [
-                    'label' => 'Percent',
-                    'value' => $score / 16 * Parameter::find($this->selectedTab)->value,
-                    'perc' => Parameter::find($this->selectedTab)->value,
-                ],
-            ];
+            $total = $inspects->count() == 0 ? 1 : $inspects->count();
+            $score = $total_matrix / $total;
+            $percent = round($score / 16 * Parameter::find($this->selectedTab)->value, 2);
+
+            $score =
+                $this->stats = [
+                    'total' => [
+                        'label' => 'Total Matrix',
+                        'value' => $total_matrix,
+                    ],
+                    'score' => [
+                        'label' => 'Component Score',
+                        'value' => $score,
+                    ],
+                    'percent' => [
+                        'label' => 'Percentage %',
+                        'value' => $percent,
+                        'perc' => Parameter::find($this->selectedTab)->value,
+                    ],
+                ];
         }
     }
 
