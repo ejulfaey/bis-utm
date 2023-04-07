@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 // Authentication
 
 Route::middleware('guest')->group(function () {
-    Route::name('filament.auth.login')->post('filament/login', [AuthController::class, 'login']);
+    Route::get('filament/login', [AuthController::class, 'login']);
     Route::name('login')->get('/', [AuthController::class, 'login']);
     Route::get('login', [AuthController::class, 'login']);
     Route::name('login_post')->post('login_post', [AuthController::class, 'login_post']);
@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
 
     Route::name('report.')->prefix('report')->group(function () {
         Route::name('project')->get('project', [ReportController::class, 'project']);
-        Route::name('inspection')->get('{$records}/inspection', [ReportController::class, 'inspection']);
+        Route::name('inspection')->get('inspection', [ReportController::class, 'inspection']);
         Route::name('report')->get('report', [ReportController::class, 'report']);
         Route::name('summary')->get('summary/{report}', [ReportController::class, 'summary']);
     });

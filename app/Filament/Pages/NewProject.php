@@ -4,17 +4,18 @@ namespace App\Filament\Pages;
 
 use App\Models\Project;
 use App\Models\Role;
+use App\Traits\PrintTrait;
 use Closure;
 use Filament\Pages\Actions\Action;
 use Filament\Tables;
 use Filament\Pages\Page;
-use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class NewProject extends Page implements Tables\Contracts\HasTable
 {
-    use Tables\Concerns\InteractsWithTable;
+    use Tables\Concerns\InteractsWithTable, PrintTrait;
 
     protected static ?string $navigationIcon = 'heroicon-o-folder-add';
 
@@ -88,6 +89,14 @@ class NewProject extends Page implements Tables\Contracts\HasTable
         return [
             Tables\Actions\Action::make('edit')
                 ->url(fn (Project $record): string => route('new-projects.edit', $record)),
+        ];
+    }
+
+    protected function getTableBulkActions(): array
+    {
+        return [
+            Tables\Actions\BulkAction::make('print')
+                ->action(fn (Collection $records) => $this->printProject($records)),
         ];
     }
 }

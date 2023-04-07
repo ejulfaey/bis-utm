@@ -18,6 +18,7 @@ use Filament\Forms;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class Inspection extends Page implements Tables\Contracts\HasTable
 {

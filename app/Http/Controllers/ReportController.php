@@ -19,16 +19,6 @@ class ReportController extends Controller
         return (new FastExcel($projects))->download('PROJECTS-' . now()->format('ymdHIs') . '.xlsx');
     }
 
-    public function inspection(Collection $records)
-    {
-        return (new FastExcel($records))->download('test.xlsx', function ($record) {
-            return [
-                'Date' => $record->date,
-                'Project' => $record->project->name,
-            ];
-        });
-    }
-
     public function report(Request $request)
     {
         $reports = Report::all();
