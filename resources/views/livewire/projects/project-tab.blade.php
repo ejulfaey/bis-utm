@@ -1,5 +1,15 @@
 <div class="space-y-4">
     <!-- Display list of charts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        @foreach($stats as $stat)
+        <x-filament::card>
+            <div class="flex justify-between">
+                {{ $stat['label'] }}
+                <h2 class="text-lg font-semibold">{{ round($stat['value'], 2) . (isset($stat['perc']) ? ' / ' . $stat['perc'] : '') }}</h2>
+            </div>
+        </x-filament::card>
+        @endforeach
+    </div>
     <div wire:ignore class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         <x-filament::card>
             <livewire:charts.chart-one :label="$charts['chart-1']['label']" :data="$charts['chart-1']['data']" />

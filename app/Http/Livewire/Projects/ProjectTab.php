@@ -5,18 +5,23 @@ namespace App\Http\Livewire\Projects;
 use App\Models\Inspection;
 use App\Models\Parameter;
 use App\Models\Project;
+use App\Traits\PrintTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class ProjectTab extends Component implements Tables\Contracts\HasTable
 {
-    use Tables\Concerns\InteractsWithTable;
+    use Tables\Concerns\InteractsWithTable, PrintTrait;
 
     public Project $project;
     public $tabs;
     public $selectedTab = 'all';
     public $charts = [];
+    public $stats = [];
 
     public function mount(): void
     {
@@ -24,6 +29,47 @@ class ProjectTab extends Component implements Tables\Contracts\HasTable
             ->pluck('name', 'id')
             ->toArray();
         $this->refreshChart();
+        $this->refreshStats();
+    }
+
+    public function refreshStats()
+    {
+        $score = Inspection::whereProjectId($this->project->id)
+            ->when(function () {
+                return $this->selectedTab !== 'all';
+            }, function ($query) {
+                return $query->whereComponentId($this->selectedTab);
+            })
+            ->get()
+            ->map(function ($model) {
+                return $model->total_matrix;
+            })
+            ->sum();
+
+        if ($this->selectedTab === 'all') {
+            $this->stats = [
+                'score' => [
+                    'label' => 'Total Matrix',
+                    'value' => $score,
+                ],
+                'percent' => [
+                    'label' => 'Percent',
+                    'value' => 0,
+                ],
+            ];
+        } else {
+            $this->stats = [
+                'score' => [
+                    'label' => 'Total Matrix',
+                    'value' => $score,
+                ],
+                'percent' => [
+                    'label' => 'Percent',
+                    'value' => $score / 100 * Parameter::find($this->selectedTab)->value,
+                    'perc' => Parameter::find($this->selectedTab)->value,
+                ],
+            ];
+        }
     }
 
     public function refreshChart()
@@ -100,9 +146,36 @@ class ProjectTab extends Component implements Tables\Contracts\HasTable
             ->latest();
     }
 
+    protected function getTableBulkActions(): array
+    {
+        return [
+            Tables\Actions\BulkAction::make('print')
+                ->icon('heroicon-o-printer')
+                ->action(fn (Collection $records) => $this->printInspection($records)),
+        ];
+    }
+
+    // protected function getTableFilters(): array
+    // {
+    //     $subcomp = Parameter::orderBy('name')
+    //         ->whereParentId($this->selectedTab)
+    //         ->get()
+    //         ->map(function ($sub) {
+    //             return Filter::make(Str::slug($sub->name))
+    //                 ->label($sub->name)
+    //                 ->query(fn (Builder $query): Builder => $query->whereSubComponentId($sub->id));
+    //         })
+    //         ->toArray();
+
+    //     return [
+    //         ...$subcomp,
+    //     ];
+    // }
+
     public function setSelectedTab($tab)
     {
         $this->selectedTab = $tab;
+        $this->refreshStats();
         $this->refreshChart();
         $this->emit('refreshChartOne', $this->charts['chart-1']);
         $this->emit('refreshChartTwo', $this->charts['chart-2']);
