@@ -15,6 +15,6 @@
     {{ $this->table }}
     <div class="px-8 py-4 self-end bg-white border rounded-lg shadow-sm flex items-center gap-x-4">
         <p>Overall Maintenance Cost (RM)</p>
-        <h2 class="text-xl font-semibold text-primary-500">{{ App\Models\MaintenanceCost::sum('total_cost') }}</h2>
+        <h2 class="text-xl font-semibold text-primary-500">{{ number_format(App\Models\MaintenanceCost::sum('total_cost'), 2) }}</h2>
     </div>
 </div>
