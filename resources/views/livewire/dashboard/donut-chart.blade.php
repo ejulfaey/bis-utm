@@ -5,14 +5,22 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    var options = {
+    var chart = [
+        '{{ $chartId }}'
+    ];
+
+    chart['{{ $chartId }}'] = new ApexCharts(document.querySelector("#{{ $chartId }}"), {
         chart: {
             type: 'donut'
+        },
+        labels: @json($label),
+        series: @json($dataset),
+        legend: {
+            show: true,
+            position: 'bottom',
+            height: 50
         }
-    };
-    options['labels'] = @json($label);
-    options['series'] = @json($dataset);
-    var chart = new ApexCharts(document.querySelector("#{{ $chartId }}"), options);
-    chart.render();
+    });
+    chart['{{ $chartId }}'].render();
 </script>
 @endpush
