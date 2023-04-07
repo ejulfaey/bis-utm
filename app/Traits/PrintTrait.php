@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Inspection;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Rap2hpoutre\FastExcel\FastExcel;
 
@@ -14,7 +15,7 @@ trait PrintTrait
         return response()->streamDownload(function () use ($records) {
             return (new FastExcel($records))->export('php://output', function ($record) {
                 return [
-                    'Date' => $record->date->format('d/m/Y'),
+                    'Date' => Carbon::parse($record->date)->format('d/m/Y'),
                     'Project' => $record->project->name,
                     'Assessor' => $record->user->name,
                     'Weather' => $record->weather->name,
@@ -31,7 +32,7 @@ trait PrintTrait
                     'Total Matrix' => $record->total_matrix,
                     'Classification' => $record->classification->name,
                     'Remark' => $record->remark,
-                    'Created Date' => $record->created_at->format('d/m/Y'),
+                    'Created Date' => $record->created_at->format('d/m/Y')
                 ];
             });
         }, sprintf('INSPECTIONS-' . now()->format('ymdHIs') . '.xlsx', date('Y-m-d')));
