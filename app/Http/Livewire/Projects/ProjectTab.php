@@ -49,10 +49,6 @@ class ProjectTab extends Component implements Tables\Contracts\HasTable
                     'label' => 'Total Matrix',
                     'value' => $total_matrix,
                 ],
-                'percent' => [
-                    'label' => 'Percent',
-                    'value' => 0,
-                ],
             ];
         } else {
             $total = $inspects->count() == 0 ? 1 : $inspects->count();
