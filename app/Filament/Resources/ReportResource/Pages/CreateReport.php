@@ -14,6 +14,10 @@ class CreateReport extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['maintenance_cost'] = filter_var($data['maintenance_cost'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $data['initial_cost'] = filter_var($data['initial_cost'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $data['npv_maintenance'] = filter_var($data['npv_maintenance'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $data['lcca'] = filter_var($data['lcca'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $filter = Arr::except($data, ['building_type', 'total_floor', 'classification']);
 
         $classification = Parameter::whereGroupId(Parameter::CLASSIFICATION_BUILDING)

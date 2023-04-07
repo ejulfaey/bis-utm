@@ -31,6 +31,10 @@ class ConstructionCost extends Model
             ->setDescriptionForEvent(fn (string $eventName) => "Construction cost has been {$eventName}");
     }
 
+    public function getInitialCostAttribute()
+    {
+        return round($this->total_cost * $this->area_of_building, 2);
+    }
 
     public function type()
     {

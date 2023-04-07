@@ -33,7 +33,6 @@ class ConstructionForm extends Component implements Forms\Contracts\HasForms
                         ->required(),
                     Grid::make(3)
                         ->hidden(function (callable $get) {
-                            return $get('building_type_id') == 0;
                         })
                         ->schema([
                             Forms\Components\TextInput::make('cc.area_of_building')

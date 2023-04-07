@@ -14,6 +14,7 @@ use App\Models\Report;
 use App\Models\Role;
 use App\Traits\PrintTrait;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -56,15 +57,16 @@ class ReportResource extends Resource
                             ->searchable()
                             ->afterStateHydrated(function (callable $set, $state) {
                                 $project = Project::find($state);
-
                                 if ($project) {
 
                                     $set('area_of_building', $project->area_of_building);
                                     $set('building_type', $project->building_type->name);
                                     $set('total_floor', $project->total_floor);
 
+                                    // set value for initial cost
                                     $initial_cost = ConstructionCost::firstWhere('building_type_id', $project->building_type_id);
-                                    $set('initial_cost', $initial_cost->total_cost);
+                                    $set('initial_cost', number_format($initial_cost->initial_cost, 2));
+                                    $set('initial_cost', $initial_cost->initial_cost);
 
                                     $codes = [
                                         'architectural',
@@ -85,7 +87,7 @@ class ReportResource extends Resource
                                             ->get();
 
                                         $total = $inspects->count() == 0 ? 1 : $inspects->count();
-                                        $score = ($inspects->sum('total_matrix') / $total);
+                                        $score = round($inspects->sum('total_matrix') / $total, 2);
                                         $percent = round($score / 16 * $component->value, 2);
                                         $bca_score += $percent;
 
@@ -100,7 +102,7 @@ class ReportResource extends Resource
                                     $set('classification', $classification->name);
                                 }
                             })
-                            ->afterStateUpdated(function ($state, callable $set) {
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                 $project = Project::find($state);
                                 $codes = [
                                     'architectural',
@@ -115,7 +117,7 @@ class ReportResource extends Resource
                                     $set('total_floor', $project->total_floor);
 
                                     $initial_cost = ConstructionCost::firstWhere('building_type_id', $project->building_type_id);
-                                    $set('initial_cost', $initial_cost->total_cost);
+                                    $set('initial_cost', number_format($initial_cost->initial_cost, 2));
 
                                     $components = Parameter::select('id', 'name', 'value')
                                         ->whereGroupId(Parameter::COMPONENT)
@@ -130,7 +132,7 @@ class ReportResource extends Resource
                                             ->get();
 
                                         $total = $inspects->count() == 0 ? 1 : $inspects->count();
-                                        $score = ($inspects->sum('total_matrix') / $total);
+                                        $score = round($inspects->sum('total_matrix') / $total, 2);
                                         $percent = round($score / 16 * $component->value, 2);
                                         $bca_score += $percent;
 
@@ -143,6 +145,14 @@ class ReportResource extends Resource
                                         ->first();
 
                                     $set('classification', $classification->name);
+
+                                    if ($get('initial_cost') && $get('npv_maintenance') && $get('energy_usage') && $get('water_usage') && $get('rental_cost')) {
+                                        $npv = filter_var($get('npv_maintenance'), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                                        $initial_cost = filter_var($get('initial_cost'), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                                        $lcca = $initial_cost + $npv + $get('energy_usage')
+                                            + $get('water_usage') + $get('rental_cost');
+                                        $set('lcca', number_format($lcca, 2));
+                                    }
                                 } else {
 
                                     foreach ($codes as  $code) {
@@ -156,6 +166,8 @@ class ReportResource extends Resource
 
                                     $set('bca_score', null);
                                     $set('classification', null);
+                                    $set('initial_cost', null);
+                                    $set('lcca', null);
                                 }
                             })
                             ->reactive()
@@ -163,8 +175,7 @@ class ReportResource extends Resource
                         Forms\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('area_of_building')
-                                    ->numeric()
-                                    ->helperText('In meter'),
+                                    ->disabled(),
                                 Forms\Components\TextInput::make('building_type')
                                     ->label('Type of building')
                                     ->disabled(),
@@ -211,10 +222,14 @@ class ReportResource extends Resource
                                 Forms\Components\TextInput::make('maintenance_cost')
                                     ->label('Cost of maintenance (RM)')
                                     ->afterStateHydrated(function (callable $set) {
-
                                         $cost = MaintenanceCost::sum('total_cost');
                                         $set('maintenance_cost', $cost);
                                     })
+                                    ->mask(
+                                        fn (TextInput\Mask $mask) => $mask
+                                            ->numeric()
+                                            ->thousandsSeparator(',')
+                                    )
                                     ->disabled(),
                                 Forms\Components\TextInput::make('time_period')
                                     ->label('Time Period, t')
@@ -224,66 +239,40 @@ class ReportResource extends Resource
                                     ->afterStateHydrated(function (callable $get, callable $set, $state) {
                                         if (!$state) {
                                             $set('npv_maintenance', '');
-                                            $set('energy_usage', '');
-                                            $set('water_usage', '');
-                                            $set('rental_cost', '');
                                             $set('lcca', '');
                                         }
 
                                         if ($state && $get('discount_rate')) {
                                             $npv = $get('maintenance_cost') / pow((1 + $get('discount_rate') / 100), $state);
-                                            $set('npv_maintenance', round($npv, 2));
+                                            $set('npv_maintenance', number_format($npv, 2));
                                         }
 
-                                        if ($state) {
-                                            $calculator = Calculator::find(1);
-                                            $energy_usage = round($calculator->yearly_electrical_cost * $state, 2);
-                                            $water_usage = round($calculator->yearly_water_cost * $state, 2);
-                                            $rental_cost = RentalCost::find(1)->cost_room;
-
-                                            $set('energy_usage', $energy_usage);
-                                            $set('water_usage', $water_usage);
-                                            $set('rental_cost', $rental_cost);
-
-                                            if (
-                                                $get('initial_cost') && $get('npv_maintenance')
-                                            ) {
-                                                $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
-                                                    + $water_usage + $rental_cost;
-                                                $set('lcca', round($lcca, 2));
-                                            }
+                                        if ($get('initial_cost') && $get('npv_maintenance') && $get('energy_usage') && $get('water_usage') && $get('rental_cost')) {
+                                            $npv = filter_var($get('npv_maintenance'), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                                            $initial_cost = filter_var($get('initial_cost'), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                                            $lcca = $initial_cost + $npv + $get('energy_usage')
+                                                + $get('water_usage') + $get('rental_cost');
+                                            $set('lcca', number_format($lcca, 2));
                                         }
                                     })
                                     ->afterStateUpdated(function (callable $get, callable $set, $state) {
 
                                         if (!$state) {
                                             $set('npv_maintenance', '');
-                                            $set('energy_usage', '');
-                                            $set('water_usage', '');
-                                            $set('rental_cost', '');
                                             $set('lcca', '');
                                         }
 
                                         if ($state && $get('discount_rate')) {
                                             $npv = $get('maintenance_cost') / pow((1 + $get('discount_rate') / 100), $state);
-                                            $set('npv_maintenance', round($npv, 2));
+                                            $set('npv_maintenance', number_format($npv, 2));
                                         }
 
-                                        if ($state) {
-                                            $calculator = Calculator::find(1);
-                                            $energy_usage = round($calculator->yearly_electrical_cost * $state, 2);
-                                            $water_usage = round($calculator->yearly_water_cost * $state, 2);
-                                            $rental_cost = RentalCost::find(1)->cost_room;
-
-                                            $set('energy_usage', $energy_usage);
-                                            $set('water_usage', $water_usage);
-                                            $set('rental_cost', $rental_cost);
-
-                                            if ($get('initial_cost') && $get('npv_maintenance')) {
-                                                $lcca = $get('initial_cost') + $get('npv_maintenance') + $energy_usage
-                                                    + $water_usage + $rental_cost;
-                                                $set('lcca', round($lcca, 2));
-                                            }
+                                        if ($get('initial_cost') && $get('npv_maintenance') && $get('energy_usage') && $get('water_usage') && $get('rental_cost')) {
+                                            $npv = filter_var($get('npv_maintenance'), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                                            $initial_cost = filter_var($get('initial_cost'), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                                            $lcca = $initial_cost + $npv + $get('energy_usage')
+                                                + $get('water_usage') + $get('rental_cost');
+                                            $set('lcca', number_format($lcca, 2));
                                         }
                                     })
                                     ->required(),
@@ -294,11 +283,15 @@ class ReportResource extends Resource
 
                                         if ($state && $get('time_period')) {
                                             $npv = $get('maintenance_cost') / pow((1 + $state / 100), $get('time_period'));
-                                            $set('npv_maintenance', round($npv, 2));
+                                            $set('npv_maintenance', number_format($npv, 2));
+                                        }
 
-                                            $lcca = $get('initial_cost') + $npv + $get('energy_usage')
+                                        if ($get('initial_cost') && $get('npv_maintenance') && $get('energy_usage') && $get('water_usage') && $get('rental_cost')) {
+                                            $npv = filter_var($get('npv_maintenance'), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                                            $initial_cost = filter_var($get('initial_cost'), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                                            $lcca = $initial_cost + $npv + $get('energy_usage')
                                                 + $get('water_usage') + $get('rental_cost');
-                                            $set('lcca', round($lcca, 2));
+                                            $set('lcca', number_format($lcca, 2));
                                         }
                                     })
                                     ->reactive()
@@ -307,22 +300,59 @@ class ReportResource extends Resource
                         Forms\Components\TextInput::make('npv_maintenance')
                             ->label('NPV of maintenance cost (RM)')
                             ->afterStateHydrated(function (callable $set, ?Model $record) {
-                                if ($record) $set('npv_maintenance', $record->npv_maintenance);
+                                if ($record) $set('npv_maintenance', number_format($record->npv_maintenance, 2));
                             })
                             ->disabled(),
                         Forms\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\TextInput::make('initial_cost')
                                     ->label('Initial Cost of Construction, CI (RM)')
+                                    ->afterStateHydrated(function (callable $set, ?Model $record) {
+                                        if ($record) $set('initial_cost', number_format($record->initial_cost, 2));
+                                    })
                                     ->disabled(),
                                 Forms\Components\TextInput::make('energy_usage')
                                     ->label('Energy usage cost (RM)')
+                                    ->afterStateHydrated(function (callable $set, ?Model $record) {
+                                        if ($record) $set('energy_usage', $record->energy_usage);
+                                        else {
+                                            $calculator = Calculator::find(1);
+                                            $set('energy_usage', $calculator->yearly_electrical_cost);
+                                        }
+                                    })
+                                    ->mask(
+                                        fn (TextInput\Mask $mask) => $mask
+                                            ->numeric()
+                                            ->thousandsSeparator(',')
+                                    )
                                     ->disabled(),
                                 Forms\Components\TextInput::make('water_usage')
                                     ->label('Water usage cost (RM)')
+                                    ->afterStateHydrated(function ($state, callable $set) {
+                                        if (!$state) {
+                                            $calculator = Calculator::find(1);
+                                            $set('water_usage', $calculator->yearly_water_cost);
+                                        }
+                                    })
+                                    ->mask(
+                                        fn (TextInput\Mask $mask) => $mask
+                                            ->numeric()
+                                            ->thousandsSeparator(',')
+                                    )
                                     ->disabled(),
                                 Forms\Components\TextInput::make('rental_cost')
                                     ->label('Rental Value (RM)')
+                                    ->afterStateHydrated(function ($state, callable $set) {
+                                        if (!$state) {
+                                            $rental = RentalCost::find(1);
+                                            $set('rental_cost', $rental->total_rental);
+                                        }
+                                    })
+                                    ->mask(
+                                        fn (TextInput\Mask $mask) => $mask
+                                            ->numeric()
+                                            ->thousandsSeparator(',')
+                                    )
                                     ->disabled(),
                             ]),
                         Forms\Components\TextInput::make('lcca')
