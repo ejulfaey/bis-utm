@@ -45,9 +45,17 @@ class ProjectTab extends Component implements Tables\Contracts\HasTable
 
         if ($this->selectedTab === 'all') {
             $this->stats = [
-                'score' => [
+                'total' => [
+                    'label' => 'Total Inspections',
+                    'value' => $inspects->count(),
+                ],
+                'matrix' => [
                     'label' => 'Total Matrix',
                     'value' => $total_matrix,
+                ],
+                'avg_matrix' => [
+                    'label' => 'Average Matrix',
+                    'value' => $total_matrix / ($inspects->count() == 0 ? 1 : $inspects->count()),
                 ],
             ];
         } else {
