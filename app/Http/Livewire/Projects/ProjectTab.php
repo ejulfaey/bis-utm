@@ -65,7 +65,7 @@ class ProjectTab extends Component implements Tables\Contracts\HasTable
                 ],
                 'percent' => [
                     'label' => 'Percent',
-                    'value' => $score / Parameter::find($this->selectedTab)->value * 100,
+                    'value' => $score / 16 * Parameter::find($this->selectedTab)->value,
                     'perc' => Parameter::find($this->selectedTab)->value,
                 ],
             ];
