@@ -109,12 +109,6 @@ class EditProject extends Page implements Forms\Contracts\HasForms
             ->send();
     }
 
-
-
-
-
-
-
     protected function getActions(): array
     {
         return [
