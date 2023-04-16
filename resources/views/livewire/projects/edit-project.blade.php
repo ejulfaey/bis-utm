@@ -5,7 +5,7 @@
             <a href="/new-projects" class="px-4 py-2 text-sm font-medium">
                 Back
             </a>
-            <x-filament::button>
+            <x-filament::button type="submit">
                 Save
             </x-filament::button>
         </div>
