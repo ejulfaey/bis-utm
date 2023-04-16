@@ -89,7 +89,9 @@ class ConstructionForm extends Component implements Forms\Contracts\HasForms
 
     public function updateField($type)
     {
-        $this->cc = ConstructionCost::firstWhere('building_type_id', $type);
+        $this->cc = ConstructionCost::firstOrCreate([
+            'building_type_id' => $type
+        ]);
         $this->initial_cost = number_format(floatval($this->cc->total_cost) * $this->cc->area_of_building, 2);
     }
 
